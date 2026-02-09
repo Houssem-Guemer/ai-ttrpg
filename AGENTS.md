@@ -20,6 +20,7 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 
 ## Data Model (Minimal)
 - Character: id, name, appearance, background, inventory[], stats{}, status.
+- Optional NPC visibility fields: publicStatus, publicNotes (only what the player would know).
 - Inventory item: itemId, name, qty, notes.
 - Item dictionary: theme -> items (id, name, description, defaultImage).
 - Monster dictionary: theme -> monsters (id, name, description, defaultImage, stats).
@@ -42,6 +43,7 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 - Prefer small updates over large rewrites to avoid bloat.
 - Each story is isolated by folder; multiple genres are supported.
 - Enforce canon and consequences: contradict invalid actions or missing items, and apply realistic outcomes for reckless choices.
+- When using reusable entries (items, characters, factions, locations, monsters), copy them into the story data first; only update the story copy after changes so shared bases stay unchanged.
 
 ## Quick Commands
 - Roll dice (risky action): node scripts/roll_dice.js risky

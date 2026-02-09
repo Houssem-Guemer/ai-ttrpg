@@ -5,6 +5,12 @@
       "name": "Hashibee",
       "file": "player.json",
       "role": "Player"
+    },
+    {
+      "id": "ranger-kael",
+      "name": "Kael",
+      "file": "kael.json",
+      "role": "Pinewarden Captain"
     }
   ]
 }

@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Story Details</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Marcellus&family=Fira+Sans:wght@300;500;700&display=swap");
+
+      :root {
+        --bg: #f3efe6;
+        --ink: #2c2a27;
+        --accent: #c44e3b;
+        --accent-2: #2e6f7e;
+        --panel: #fffaf0;
+        --shadow: rgba(31, 27, 21, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Fira Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top left, #f8f1d8 0%, #f3efe6 40%, #efe3cf 100%);
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 2.5rem 6vw 1rem;
+      }
+
+      nav {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      nav a {
+        color: var(--accent-2);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(46, 111, 126, 0.5);
+      }
+
+      h1 {
+        font-family: "Marcellus", serif;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        margin: 0 0 0.5rem;
+        letter-spacing: 0.02em;
+      }
+
+      .subhead {
+        color: #5c554a;
+        max-width: 42rem;
+        line-height: 1.6;
+      }
+
+      main {
+        display: grid;
+        gap: 1.5rem;
+        padding: 1.5rem 6vw 4rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .panel {
+        background: var(--panel);
+        padding: 1.25rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 12px 30px var(--shadow);
+        animation: rise 0.8s ease both;
+      }
+
+      .panel h2 {
+        margin-top: 0;
+        font-family: "Marcellus", serif;
+        font-size: 1.3rem;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(196, 78, 59, 0.15);
+        color: var(--accent);
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .section-title {
+        color: var(--accent-2);
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-top: 1rem;
+      }
+
+      .log-entry {
+        margin: 0.8rem 0;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+      }
+
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+
+      .log-entry > span {
+        display: block;
+        font-size: 0.75rem;
+        color: #6d6558;
+        margin-bottom: 0.3rem;
+      }
+
+      .hoverable {
+        border-bottom: 1px dashed rgba(46, 111, 126, 0.6);
+        cursor: help;
+      }
+
+      .item-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.55rem;
+        margin: 0.2rem 0.3rem 0 0;
+        border-radius: 999px;
+        background: rgba(46, 111, 126, 0.12);
+        color: var(--accent-2);
+        font-size: 0.75rem;
+        cursor: help;
+      }
+
+      .item-grid {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .item-card {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem;
+        border-radius: 12px;
+        background: rgba(44, 42, 39, 0.04);
+      }
+
+      .item-card img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .character-card {
+        display: grid;
+        gap: 0.6rem;
+        padding: 0.8rem;
+        border-radius: 14px;
+        background: rgba(44, 42, 39, 0.04);
+      }
+
+      .character-header {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 0.8rem;
+        align-items: center;
+      }
+
+      .character-header img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .character-group {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      #item-tooltip {
+        position: fixed;
+        z-index: 999;
+        display: none;
+        padding: 0.4rem;
+        border-radius: 12px;
+        background: var(--panel);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+        width: 220px;
+      }
+
+      #item-tooltip img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        display: block;
+        margin-bottom: 0.4rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      #item-tooltip .title {
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+      }
+
+      #item-tooltip .desc {
+        font-size: 0.8rem;
+        color: #5c554a;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 640px) {
+        header,
+        main {
+          padding-left: 1.2rem;
+          padding-right: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 id="story-title">Story Details</h1>
+      <p class="subhead" id="story-subhead">Select a story from the list.</p>
+      <nav>
+        <a href="index.html">Story List</a>
+        <a href="library.html">Image Library</a>
+      </nav>
+    </header>
+    <main>
+      <section class="grid">
+        <div class="panel">
+          <h2>Story Snapshot</h2>
+          <div id="story-meta">Loading...</div>
+        </div>
+        <div class="panel">
+          <h2>World & Factions</h2>
+          <div id="world">Loading...</div>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="panel">
+          <h2>Characters</h2>
+          <div id="characters">Loading...</div>
+        </div>
+        <div class="panel">
+          <h2>Items</h2>
+          <div id="items">Loading...</div>
+        </div>
+        <div class="panel">
+          <h2>Log</h2>
+          <div id="log">Loading...</div>
+        </div>
+      </section>
+    </main>
+    <div id="item-tooltip">
+      <img alt="Preview" />
+      <div class="title"></div>
+      <div class="desc"></div>
+    </div>
+    <script>
+      const defaultItemImage = "../assets/other.png";
+      const defaultCharacterImage = "../assets/character-male.png";
+      let itemsCatalog = null;
+      let charactersCatalog = null;
+      let monstersCatalog = null;
+      let reusableFactionsCatalog = null;
+      let reusableLocationsCatalog = null;
+      let currentStoryTheme = null;
+      let currentCharacters = null;
+      let currentLog = null;
+      let currentFactions = null;
+      let currentWorld = null;
+      let currentStoryId = null;
+      let keywordRegex = null;
+      let keywordLookup = new Map();
+
+      async function loadJson(path) {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`Failed to load ${path}`);
+        }
+        return response.json();
+      }
+
+      function renderStoryMeta(story) {
+        const container = document.getElementById("story-meta");
+        container.innerHTML = `
+          <div class="pill">${story.genre}</div>
+          <p><strong>Scene:</strong> ${injectKeywords(escapeHtml(story.currentScene))}</p>
+          <p>${injectKeywords(escapeHtml(story.summary))}</p>
+          <p class="section-title">Narrator style</p>
+          <p>${injectKeywords(escapeHtml(story.narratorStyle))}</p>
+        `;
+        attachHover(container);
+      }
+
+      function renderWorld(world, factions) {
+        const container = document.getElementById("world");
+        const locations = world.locations
+          .map((loc) => {
+            const image = getImage("location", currentStoryId, loc.id, defaultItemImage);
+            return `<li><span class="hoverable" data-type="location" data-image="${image}" data-name="${loc.name}" data-description="${escapeHtml(loc.notes)}"><strong>${loc.name}</strong></span> - ${loc.notes}</li>`;
+          })
+          .join("");
+        const factionList = factions.factions
+          .map((faction) => {
+            const image = getImage("faction", currentStoryId, faction.id, defaultItemImage);
+            return `<li><span class="hoverable" data-type="faction" data-image="${image}" data-name="${faction.name}" data-description="${escapeHtml(faction.description)}"><strong>${faction.name}</strong></span> - ${faction.description}</li>`;
+          })
+          .join("");
+        container.innerHTML = `
+          <p><strong>${world.name}</strong> (${world.era})</p>
+          <p>${world.description}</p>
+          <p class="section-title">Locations</p>
+          <ul>${locations}</ul>
+          <p class="section-title">Factions</p>
+          <ul>${factionList}</ul>
+        `;
+        attachHover(container);
+      }
+
+      function renderCharacters(characters) {
+        const container = document.getElementById("characters");
+        const player = characters.find((char) => char.id === "player");
+        const npcs = characters.filter((char) => char.id !== "player");
+        const playerHtml = player ? renderPlayerCard(player) : "<p>No player found.</p>";
+        const npcHtml = npcs.length ? npcs.map((char) => renderNpcCard(char)).join("") : "<p>No known NPCs.</p>";
+        container.innerHTML = `
+          <div>
+            <p class="section-title">Player</p>
+            ${playerHtml}
+          </div>
+          <div>
+            <p class="section-title">Narrator Characters</p>
+            <div class="character-group">${npcHtml}</div>
+          </div>
+        `;
+        attachHover(container);
+      }
+
+      function renderPlayerCard(char) {
+        const inventory = char.inventory
+          .map((item) => {
+            const image = getItemImage(item.itemId, currentStoryTheme);
+            const description = getItemDescription(item.itemId, currentStoryTheme);
+            return `
+              <span class="item-tag hoverable" data-type="item" data-image="${image}" data-name="${item.name}" data-description="${escapeHtml(description)}">
+                ${item.name} x${item.qty}
+              </span>
+            `;
+          })
+          .join("");
+        const image = getStoryCharacterImage(char.id);
+        return `
+          <div class="character-card">
+            <div class="character-header">
+              <img src="${image}" alt="${char.name}" />
+              <div>
+                <span class="hoverable" data-type="character" data-image="${image}" data-name="${char.name}" data-description="${escapeHtml(char.background || char.appearance)}"><strong>${char.name}</strong></span>
+                <div>${char.appearance}</div>
+              </div>
+            </div>
+            <div>
+              <p class="section-title">Inventory</p>
+              <div>${inventory || "No items."}</div>
+              <p class="section-title">Status</p>
+              <p>${char.status}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderNpcCard(char) {
+        const image = getStoryCharacterImage(char.id);
+        const publicStatus = char.publicStatus ? `<p class="section-title">Status</p><p>${escapeHtml(char.publicStatus)}</p>` : "";
+        const publicNotes = char.publicNotes ? `<p class="section-title">Known Info</p><p>${escapeHtml(char.publicNotes)}</p>` : "";
+        return `
+          <div class="character-card">
+            <div class="character-header">
+              <img src="${image}" alt="${char.name}" />
+              <div>
+                <span class="hoverable" data-type="character" data-image="${image}" data-name="${char.name}" data-description="${escapeHtml(char.background || char.appearance)}"><strong>${char.name}</strong></span>
+                <div>${char.appearance}</div>
+              </div>
+            </div>
+            ${publicStatus}
+            ${publicNotes}
+          </div>
+        `;
+      }
+
+      function renderLog(entries) {
+        const container = document.getElementById("log");
+        container.innerHTML = entries
+          .map((entry) => {
+            const itemTags = Array.isArray(entry.items)
+              ? entry.items
+                  .map((itemId) => {
+                    const item = findItem(itemId, currentStoryTheme);
+                    const label = item ? item.name : itemId;
+                    const image = getItemImage(itemId, currentStoryTheme);
+                    const description = item ? item.description : "Item";
+                    return `<span class="item-tag hoverable" data-type="item" data-image="${image}" data-name="${label}" data-description="${escapeHtml(description)}">${label}</span>`;
+                  })
+                  .join("")
+              : "";
+            const logText = injectKeywords(escapeHtml(entry.text));
+            return `
+              <div class="log-entry">
+                <span>Turn ${entry.turn} - ${entry.speaker}</span>
+                <div>${logText}</div>
+                ${itemTags ? `<div>${itemTags}</div>` : ""}
+              </div>
+            `;
+          })
+          .join("");
+        attachHover(container);
+      }
+
+      function renderItemsPanel(themeItems) {
+        const container = document.getElementById("items");
+        if (!themeItems) {
+          container.innerHTML = "No items available for this theme.";
+          return;
+        }
+        const itemsHtml = themeItems.items
+          .map((item) => {
+            const image = getItemImage(item.id, currentStoryTheme);
+            return `
+              <div class="item-card">
+                <img src="${image}" alt="${item.name}" />
+                <div>
+                  <strong>${item.name}</strong>
+                  <div>${item.description}</div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+        container.innerHTML = `<div class="item-grid">${itemsHtml}</div>`;
+      }
+
+      function getItemImage(itemId, theme) {
+        if (!itemId || !theme) return defaultItemImage;
+        const key = `itemImage:${theme}:${itemId}`;
+        const stored = localStorage.getItem(key);
+        if (stored) return stored;
+        const generalized = getImage("item", theme, itemId, null);
+        if (generalized) return generalized;
+        const item = findItem(itemId, theme);
+        return item && item.defaultImage ? item.defaultImage : defaultItemImage;
+      }
+
+      function getItemDescription(itemId, theme) {
+        const item = findItem(itemId, theme);
+        return item ? item.description : "Item";
+      }
+
+      function getImage(type, scope, id, fallback) {
+        if (!type || !scope || !id) return fallback;
+        const key = `image:${type}:${scope}:${id}`;
+        const stored = localStorage.getItem(key);
+        if (stored) return stored;
+        return fallback;
+      }
+
+      function findItem(itemId, theme) {
+        if (!itemsCatalog || !theme) return null;
+        const themeItems = itemsCatalog.themes && itemsCatalog.themes[theme];
+        if (!themeItems) return null;
+        return themeItems.items.find((item) => item.id === itemId) || null;
+      }
+
+      function getStoryCharacterImage(characterId) {
+        return getImage("story-character", currentStoryId, characterId, defaultCharacterImage);
+      }
+
+      function attachHover(container) {
+        const tooltip = document.getElementById("item-tooltip");
+        const tooltipImage = tooltip.querySelector("img");
+        const tooltipTitle = tooltip.querySelector(".title");
+        const tooltipDesc = tooltip.querySelector(".desc");
+        container.querySelectorAll(".hoverable").forEach((tag) => {
+          tag.addEventListener("mouseenter", (event) => {
+            tooltipImage.src = tag.getAttribute("data-image") || defaultItemImage;
+            tooltipTitle.textContent = tag.getAttribute("data-name") || "Details";
+            tooltipDesc.textContent = tag.getAttribute("data-description") || "";
+            tooltip.style.display = "block";
+            moveTooltip(event);
+          });
+          tag.addEventListener("mousemove", moveTooltip);
+          tag.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+          });
+        });
+      }
+
+      function moveTooltip(event) {
+        const tooltip = document.getElementById("item-tooltip");
+        const offset = 16;
+        const tooltipWidth = tooltip.offsetWidth || 220;
+        const tooltipHeight = tooltip.offsetHeight || 220;
+        const maxX = window.innerWidth - tooltipWidth - 8;
+        const maxY = window.innerHeight - tooltipHeight - 8;
+        const left = Math.min(event.clientX + offset, Math.max(8, maxX));
+        const top = Math.min(event.clientY + offset, Math.max(8, maxY));
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      function buildKeywordIndex() {
+        const keywords = [];
+        if (currentFactions && Array.isArray(currentFactions.factions)) {
+          currentFactions.factions.forEach((faction) => {
+            const image = getImage("faction", currentStoryId, faction.id, defaultItemImage);
+            const terms = [faction.name].concat(faction.aliases || []);
+            terms.forEach((term) => {
+              keywords.push({
+                term,
+                name: faction.name,
+                description: faction.description,
+                image
+              });
+            });
+          });
+        }
+        if (currentWorld && Array.isArray(currentWorld.locations)) {
+          currentWorld.locations.forEach((loc) => {
+            const image = getImage("location", currentStoryId, loc.id, defaultItemImage);
+            const terms = [loc.name].concat(loc.aliases || []);
+            terms.forEach((term) => {
+              keywords.push({
+                term,
+                name: loc.name,
+                description: loc.notes,
+                image
+              });
+            });
+          });
+        }
+        const reusableFactions = reusableFactionsCatalog && reusableFactionsCatalog.themes && reusableFactionsCatalog.themes[currentStoryTheme];
+        if (reusableFactions && Array.isArray(reusableFactions.factions)) {
+          reusableFactions.factions.forEach((faction) => {
+            const image = getImage("faction-global", currentStoryTheme, faction.id, defaultItemImage);
+            const terms = [faction.name].concat(faction.aliases || []);
+            terms.forEach((term) => {
+              keywords.push({
+                term,
+                name: faction.name,
+                description: faction.description,
+                image
+              });
+            });
+          });
+        }
+        const reusableLocations = reusableLocationsCatalog && reusableLocationsCatalog.themes && reusableLocationsCatalog.themes[currentStoryTheme];
+        if (reusableLocations && Array.isArray(reusableLocations.locations)) {
+          reusableLocations.locations.forEach((loc) => {
+            const image = getImage("location-global", currentStoryTheme, loc.id, defaultItemImage);
+            const terms = [loc.name].concat(loc.aliases || []);
+            terms.forEach((term) => {
+              keywords.push({
+                term,
+                name: loc.name,
+                description: loc.description,
+                image
+              });
+            });
+          });
+        }
+        if (currentCharacters) {
+          currentCharacters.forEach((char) => {
+            const image = getStoryCharacterImage(char.id);
+            keywords.push({
+              term: char.name,
+              name: char.name,
+              description: char.background || char.appearance,
+              image
+            });
+          });
+        }
+
+        const deduped = [];
+        const seen = new Set();
+        keywords.forEach((entry) => {
+          if (!entry.term) return;
+          const key = entry.term;
+          if (seen.has(key)) return;
+          seen.add(key);
+          deduped.push(entry);
+        });
+        keywordLookup = new Map(deduped.map((entry) => [entry.term, entry]));
+        keywordRegex = buildKeywordRegex(deduped.map((entry) => entry.term));
+      }
+
+      function injectKeywords(text) {
+        if (!keywordRegex) return text;
+        return text.replace(keywordRegex, (match, boundary, term) => {
+          const entry = keywordLookup.get(term);
+          if (!entry) return match;
+          const span = `<span class="hoverable" data-type="keyword" data-image="${entry.image}" data-name="${escapeHtml(entry.name)}" data-description="${escapeHtml(entry.description)}">${term}</span>`;
+          return `${boundary}${span}`;
+        });
+      }
+
+      function buildKeywordRegex(terms) {
+        if (!terms.length) return null;
+        const escapedTerms = terms
+          .slice()
+          .sort((a, b) => b.length - a.length)
+          .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+        const pattern = escapedTerms.join("|");
+        return new RegExp(`(^|[^\\w])(${pattern})(?=[^\\w]|$)`, "g");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      async function loadStoryCharacters(path, player) {
+        try {
+          const index = await loadJson(`${path}/characters/index.json`);
+          const entries = await Promise.all(
+            index.characters.map((entry) => loadJson(`${path}/characters/${entry.file}`))
+          );
+          return entries;
+        } catch (error) {
+          return [player];
+        }
+      }
+
+      async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const storyId = params.get("story");
+        if (!storyId) {
+          document.getElementById("story-meta").innerHTML = "Missing story id.";
+          return;
+        }
+
+        itemsCatalog = await loadJson("../data/items.json");
+        charactersCatalog = await loadJson("../data/characters.json");
+        monstersCatalog = await loadJson("../data/monsters.json");
+        reusableFactionsCatalog = await loadJson("../data/factions.json");
+        reusableLocationsCatalog = await loadJson("../data/locations.json");
+
+        const index = await loadJson("../data/index.json");
+        const story = index.stories.find((entry) => entry.id === storyId);
+        if (!story) {
+          document.getElementById("story-meta").innerHTML = "Story not found.";
+          return;
+        }
+
+        const [storyData, world, factions, log, player] = await Promise.all([
+          loadJson(`../${story.path}/story.json`),
+          loadJson(`../${story.path}/world.json`),
+          loadJson(`../${story.path}/factions.json`),
+          loadJson(`../${story.path}/log.json`),
+          loadJson(`../${story.path}/characters/player.json`)
+        ]);
+
+        currentStoryId = storyId;
+        currentStoryTheme = storyData.genre;
+        currentCharacters = await loadStoryCharacters(`../${story.path}`, player);
+        currentLog = log;
+        currentWorld = world;
+        currentFactions = factions;
+
+        document.getElementById("story-title").textContent = storyData.title;
+        document.getElementById("story-subhead").textContent = storyData.summary;
+
+        buildKeywordIndex();
+        renderStoryMeta(storyData);
+        renderWorld(world, factions);
+        renderCharacters(currentCharacters);
+        renderLog(currentLog);
+        const themeItems = itemsCatalog.themes && itemsCatalog.themes[currentStoryTheme];
+        renderItemsPanel(themeItems);
+      }
+
+      init().catch((error) => {
+        console.error(error);
+        document.getElementById("story-meta").innerHTML = "Failed to load story.";
+      });
+    </script>
+  </body>
+</html>

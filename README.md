@@ -32,7 +32,7 @@ A lightweight, file-backed DnD-style narrator engine. The assistant narrates the
 ```bash
 node scripts/server.js
 ```
-Then visit `http://localhost:8000/web/`.
+Then visit `http://localhost:8000/web/` for the story list.
 
 2) (Optional) Use a simple read-only server
 ```bash
@@ -40,6 +40,7 @@ python -m http.server
 ```
 This serves the UI but uploads will fail. Use the Node server above for image uploads.
 
+Story details: `http://localhost:8000/web/story.html?story=starter-fantasy`.
 Image library: `http://localhost:8000/web/library.html`.
 
 3) Roll dice for risky actions
@@ -71,6 +72,10 @@ Tell the narrator what your character does. The narrator will update JSON canon 
 - New stories use a structured setup: theme/setting, player appearance/background, and optional additional characters.
 - Player overrides are only accepted during setup.
 - Narrator enforces canon and consequences for invalid or reckless actions.
+
+## Character Visibility
+- The UI shows full details for the player only.
+- For NPCs, only visible info is shown. Use `publicStatus` and `publicNotes` in NPC JSON to reveal what the player has learned.
 
 ## Notes
 - The example story lives in `data/stories/starter-fantasy/`.

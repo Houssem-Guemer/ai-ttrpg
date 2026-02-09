@@ -1,0 +1,16 @@
+{
+  "background": "A quiet ranger who knows every trail in the pines.",
+  "inventory": [],
+  "appearance": "Weathered ranger with a forest-green cloak and a quiet, watchful gaze.",
+  "name": "Kael",
+  "status": "Missing from Lanternrest for several days.",
+  "id": "ranger-kael",
+  "stats": {
+    "str": 12,
+    "dex": 15,
+    "con": 13,
+    "int": 11,
+    "wis": 14,
+    "cha": 10
+  }
+}

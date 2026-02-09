@@ -29,7 +29,7 @@
       }
 
       header {
-        padding: 2.5rem 6vw 1rem;
+        padding: 2.5rem 6vw 2rem;
       }
 
       nav {
@@ -61,7 +61,7 @@
       main {
         display: grid;
         gap: 1.5rem;
-        padding: 1.5rem 6vw 4rem;
+        padding: 0 6vw 4rem;
       }
 
       .grid {
@@ -119,85 +119,9 @@
         margin-top: 1rem;
       }
 
-      .log-entry {
-        margin: 0.8rem 0;
-        padding-bottom: 0.8rem;
-        border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
-      }
-
-      .log-entry:last-child {
-        border-bottom: none;
-      }
-
-      .log-entry > span {
-        display: block;
-        font-size: 0.75rem;
-        color: #6d6558;
-        margin-bottom: 0.3rem;
-      }
-
-      .item-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.2rem 0.55rem;
-        margin: 0.2rem 0.3rem 0 0;
-        border-radius: 999px;
-        background: rgba(46, 111, 126, 0.12);
-        color: var(--accent-2);
-        font-size: 0.75rem;
-        cursor: help;
-      }
-
       .hoverable {
         border-bottom: 1px dashed rgba(46, 111, 126, 0.6);
         cursor: help;
-      }
-
-      .hoverable-block {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.1rem 0.4rem;
-        border-radius: 999px;
-        background: rgba(196, 78, 59, 0.12);
-        color: var(--accent);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .item-grid {
-        display: grid;
-        gap: 0.8rem;
-      }
-
-      .item-card {
-        display: grid;
-        grid-template-columns: 48px 1fr auto;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.6rem;
-        border-radius: 12px;
-        background: rgba(44, 42, 39, 0.04);
-      }
-
-      .item-card img {
-        width: 48px;
-        height: 48px;
-        object-fit: cover;
-        border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-      }
-
-      .item-card button {
-        border: none;
-        border-radius: 999px;
-        padding: 0.35rem 0.8rem;
-        font-size: 0.75rem;
-        background: rgba(196, 78, 59, 0.14);
-        color: var(--accent);
-        cursor: pointer;
       }
 
       #item-tooltip {
@@ -255,7 +179,7 @@
   <body>
     <header>
       <h1>Codex Narrator Console</h1>
-      <p class="subhead">Browse story canon, characters, and narrative logs. Select a story to see the current scene and facts the narrator should preserve. Hoverable terms use a dashed underline.</p>
+      <p class="subhead">Choose a story to view details. Hoverable terms use a dashed underline.</p>
       <nav>
         <a href="library.html">Image Library</a>
       </nav>
@@ -270,24 +194,6 @@
           <h2>Story Snapshot</h2>
           <div id="story-meta">Select a story.</div>
         </div>
-        <div class="panel">
-          <h2>World & Factions</h2>
-          <div id="world">Select a story.</div>
-        </div>
-      </section>
-      <section class="grid">
-        <div class="panel">
-          <h2>Characters</h2>
-          <div id="characters">Select a story.</div>
-        </div>
-        <div class="panel">
-          <h2>Items</h2>
-          <div id="items">Select a story.</div>
-        </div>
-        <div class="panel">
-          <h2>Log</h2>
-          <div id="log">Select a story.</div>
-        </div>
       </section>
     </main>
     <div id="item-tooltip">
@@ -299,21 +205,11 @@
       const defaultItemImage = "../assets/other.png";
       const defaultCharacterImage = "../assets/character-male.png";
       let itemsCatalog = null;
-      let charactersCatalog = null;
-      let monstersCatalog = null;
       let reusableFactionsCatalog = null;
       let reusableLocationsCatalog = null;
-      let currentStoryTheme = null;
-      let currentCharacters = null;
-      let currentLog = null;
-      let currentFactions = null;
-      let currentWorld = null;
-      let currentStoryId = null;
-      let pendingUpload = null;
-      let keywordIndex = [];
       let keywordRegex = null;
       let keywordLookup = new Map();
-      let uploadInFlight = false;
+      let activeStoryId = null;
 
       async function loadJson(path) {
         const response = await fetch(path);
@@ -329,7 +225,12 @@
         stories.forEach((story) => {
           const btn = document.createElement("button");
           btn.innerHTML = `<strong>${story.title}</strong><br /><span class="pill">${story.genre}</span>`;
-          btn.addEventListener("click", () => loadStory(`../${story.path}`, story.id));
+          btn.addEventListener("click", () => {
+            window.location.href = `story.html?story=${encodeURIComponent(story.id)}`;
+          });
+          btn.addEventListener("mouseenter", () => {
+            loadStorySnapshot(story).catch((error) => console.error(error));
+          });
           container.appendChild(btn);
         });
       }
@@ -344,187 +245,6 @@
           <p>${injectKeywords(escapeHtml(story.narratorStyle))}</p>
         `;
         attachHover(container);
-      }
-
-      function renderWorld(world, factions) {
-        const container = document.getElementById("world");
-        const locations = world.locations
-          .map((loc) => {
-            const image = getImage("location", currentStoryId, loc.id, defaultItemImage);
-            return `<li><span class="hoverable" data-type="location" data-image="${image}" data-name="${loc.name}" data-description="${escapeHtml(loc.notes)}"><strong>${loc.name}</strong></span> - ${loc.notes}</li>`;
-          })
-          .join("");
-        const factionList = factions.factions
-          .map((faction) => {
-            const image = getImage("faction", currentStoryId, faction.id, defaultItemImage);
-            return `<li><span class="hoverable" data-type="faction" data-image="${image}" data-name="${faction.name}" data-description="${escapeHtml(faction.description)}"><strong>${faction.name}</strong></span> - ${faction.description}</li>`;
-          })
-          .join("");
-        container.innerHTML = `
-          <p><strong>${world.name}</strong> (${world.era})</p>
-          <p>${world.description}</p>
-          <p class="section-title">Locations</p>
-          <ul>${locations}</ul>
-          <p class="section-title">Factions</p>
-          <ul>${factionList}</ul>
-        `;
-        attachHover(container);
-      }
-
-      function renderCharacters(characters) {
-        const container = document.getElementById("characters");
-        container.innerHTML = characters
-          .map((char) => {
-            const inventory = char.inventory
-              .map((item) => {
-                const image = getItemImage(item.itemId, currentStoryTheme);
-                const description = getItemDescription(item.itemId, currentStoryTheme);
-                return `
-                  <span class="item-tag hoverable" data-type="item" data-image="${image}" data-name="${item.name}" data-description="${escapeHtml(description)}">
-                    ${item.name} x${item.qty}
-                  </span>
-                `;
-              })
-              .join("");
-            return `
-              <div>
-                <p>
-                  <span class="hoverable" data-type="character" data-image="${getStoryCharacterImage(char.id)}" data-name="${char.name}" data-description="${escapeHtml(char.background || char.appearance)}"><strong>${char.name}</strong></span>
-                </p>
-                <p>${char.appearance}</p>
-                <p class="section-title">Inventory</p>
-                <div>${inventory || "No items."}</div>
-                <p class="section-title">Status</p>
-                <p>${char.status}</p>
-              </div>
-            `;
-          })
-          .join("<hr />");
-        attachHover(container);
-      }
-
-      function renderLog(entries) {
-        const container = document.getElementById("log");
-        container.innerHTML = entries
-          .map(
-            (entry) => {
-              const itemTags = Array.isArray(entry.items)
-                ? entry.items
-                    .map((itemId) => {
-                      const item = findItem(itemId, currentStoryTheme);
-                      const label = item ? item.name : itemId;
-                      const image = getItemImage(itemId, currentStoryTheme);
-                      const description = item ? item.description : "Item";
-                      return `<span class="item-tag hoverable" data-type="item" data-image="${image}" data-name="${label}" data-description="${escapeHtml(description)}">${label}</span>`;
-                    })
-                    .join("")
-                : "";
-              const logText = injectKeywords(escapeHtml(entry.text));
-              return `
-              <div class="log-entry">
-                <span>Turn ${entry.turn} - ${entry.speaker}</span>
-                <div>${logText}</div>
-                ${itemTags ? `<div>${itemTags}</div>` : ""}
-              </div>
-            `;
-            }
-          )
-          .join("");
-        attachHover(container);
-      }
-
-      function renderItemsPanel(themeItems) {
-        const container = document.getElementById("items");
-        if (!themeItems) {
-          container.innerHTML = "No items available for this theme.";
-          return;
-        }
-        const itemsHtml = themeItems.items
-          .map((item) => {
-            const image = getItemImage(item.id, currentStoryTheme);
-            return `
-              <div class="item-card">
-                <img src="${image}" alt="${item.name}" />
-                <div>
-                  <strong>${item.name}</strong>
-                  <div>${item.description}</div>
-                </div>
-                <button data-item="${item.id}">Upload</button>
-              </div>
-            `;
-          })
-          .join("");
-        container.innerHTML = `
-          <input id="item-image-input" type="file" accept="image/*" style="display:none" />
-          <div class="item-grid">${itemsHtml}</div>
-        `;
-        const input = document.getElementById("item-image-input");
-        container.querySelectorAll("button[data-item]").forEach((button) => {
-          button.addEventListener("click", () => {
-            pendingUpload = button.getAttribute("data-item");
-            input.value = "";
-            input.click();
-          });
-        });
-        input.addEventListener("change", async (event) => {
-          const file = event.target.files && event.target.files[0];
-          if (!file || !pendingUpload) return;
-          const imagePath = await uploadImage(file);
-          if (!imagePath) return;
-          setItemImage(pendingUpload, currentStoryTheme, imagePath);
-          pendingUpload = null;
-          renderItemsPanel(themeItems);
-          if (currentCharacters) renderCharacters(currentCharacters);
-          if (currentLog) renderLog(currentLog);
-        });
-      }
-
-      function getItemImage(itemId, theme) {
-        if (!itemId || !theme) return defaultItemImage;
-        const key = `itemImage:${theme}:${itemId}`;
-        const stored = localStorage.getItem(key);
-        if (stored) return stored;
-        const generalized = getImage("item", theme, itemId, null);
-        if (generalized) return generalized;
-        const item = findItem(itemId, theme);
-        return item && item.defaultImage ? item.defaultImage : defaultItemImage;
-      }
-
-      function setItemImage(itemId, theme, dataUrl) {
-        if (!itemId || !theme) return;
-        const key = `itemImage:${theme}:${itemId}`;
-        localStorage.setItem(key, dataUrl);
-        setImage("item", theme, itemId, dataUrl);
-      }
-
-      function getItemDescription(itemId, theme) {
-        const item = findItem(itemId, theme);
-        return item ? item.description : "Item";
-      }
-
-      function getImage(type, scope, id, fallback) {
-        if (!type || !scope || !id) return fallback;
-        const key = `image:${type}:${scope}:${id}`;
-        const stored = localStorage.getItem(key);
-        if (stored) return stored;
-        return fallback;
-      }
-
-      function setImage(type, scope, id, dataUrl) {
-        if (!type || !scope || !id) return;
-        const key = `image:${type}:${scope}:${id}`;
-        localStorage.setItem(key, dataUrl);
-      }
-
-      function findItem(itemId, theme) {
-        if (!itemsCatalog || !theme) return null;
-        const themeItems = itemsCatalog.themes && itemsCatalog.themes[theme];
-        if (!themeItems) return null;
-        return themeItems.items.find((item) => item.id === itemId) || null;
-      }
-
-      function getStoryCharacterImage(characterId) {
-        return getImage("story-character", currentStoryId, characterId, defaultCharacterImage);
       }
 
       function attachHover(container) {
@@ -550,101 +270,53 @@
       function moveTooltip(event) {
         const tooltip = document.getElementById("item-tooltip");
         const offset = 16;
-        tooltip.style.left = `${event.clientX + offset}px`;
-        tooltip.style.top = `${event.clientY + offset}px`;
+        const tooltipWidth = tooltip.offsetWidth || 220;
+        const tooltipHeight = tooltip.offsetHeight || 220;
+        const maxX = window.innerWidth - tooltipWidth - 8;
+        const maxY = window.innerHeight - tooltipHeight - 8;
+        const left = Math.min(event.clientX + offset, Math.max(8, maxX));
+        const top = Math.min(event.clientY + offset, Math.max(8, maxY));
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
       }
 
-      async function loadStory(path, storyId) {
-        try {
-          if (!itemsCatalog) {
-            itemsCatalog = await loadJson("../data/items.json");
-          }
-          if (!charactersCatalog) {
-            charactersCatalog = await loadJson("../data/characters.json");
-          }
-          if (!monstersCatalog) {
-            monstersCatalog = await loadJson("../data/monsters.json");
-          }
-          if (!reusableFactionsCatalog) {
-            reusableFactionsCatalog = await loadJson("../data/factions.json");
-          }
-          if (!reusableLocationsCatalog) {
-            reusableLocationsCatalog = await loadJson("../data/locations.json");
-          }
-          const [story, world, factions, log, player] = await Promise.all([
-            loadJson(`${path}/story.json`),
-            loadJson(`${path}/world.json`),
-            loadJson(`${path}/factions.json`),
-            loadJson(`${path}/log.json`),
-            loadJson(`${path}/characters/player.json`)
-          ]);
-
-          currentStoryId = storyId || story.id;
-          currentStoryTheme = story.genre;
-          currentCharacters = await loadStoryCharacters(path, player);
-          currentLog = log;
-          currentWorld = world;
-          currentFactions = factions;
-          keywordIndex = buildKeywordIndex();
-          renderStoryMeta(story);
-          renderWorld(world, factions);
-          renderCharacters(currentCharacters);
-          renderLog(currentLog);
-          const themeItems = itemsCatalog.themes && itemsCatalog.themes[currentStoryTheme];
-          renderItemsPanel(themeItems);
-        } catch (error) {
-          console.error(error);
-        }
+      async function loadStorySnapshot(story) {
+        activeStoryId = story.id;
+        const [storyData, world, factions, player] = await Promise.all([
+          loadJson(`../${story.path}/story.json`),
+          loadJson(`../${story.path}/world.json`),
+          loadJson(`../${story.path}/factions.json`),
+          loadJson(`../${story.path}/characters/player.json`)
+        ]);
+        if (activeStoryId !== story.id) return;
+        await ensureCatalogs();
+        buildKeywordIndex({
+          storyId: story.id,
+          theme: story.genre,
+          world,
+          factions,
+          characters: [player]
+        });
+        renderStoryMeta(storyData);
       }
 
-      function showLoadError(error) {
-        const message = `
-          <p><strong>Stories could not be loaded.</strong></p>
-          <p>Open this UI from a local server so the browser can read JSON files.</p>
-          <p>Example: <code>python -m http.server</code> then visit <code>http://localhost:8000/web/</code>.</p>
-        `;
-        document.getElementById("stories").innerHTML = message;
-        document.getElementById("story-meta").innerHTML = message;
-        document.getElementById("world").innerHTML = message;
-        document.getElementById("characters").innerHTML = message;
-        document.getElementById("items").innerHTML = message;
-        document.getElementById("log").innerHTML = message;
-        console.error(error);
-      }
-
-      async function init() {
-        try {
+      async function ensureCatalogs() {
+        if (!itemsCatalog) {
           itemsCatalog = await loadJson("../data/items.json");
-          charactersCatalog = await loadJson("../data/characters.json");
-          monstersCatalog = await loadJson("../data/monsters.json");
+        }
+        if (!reusableFactionsCatalog) {
           reusableFactionsCatalog = await loadJson("../data/factions.json");
+        }
+        if (!reusableLocationsCatalog) {
           reusableLocationsCatalog = await loadJson("../data/locations.json");
-          const index = await loadJson("../data/index.json");
-          renderStoryList(index.stories);
-        } catch (error) {
-          showLoadError(error);
         }
       }
 
-      init();
-
-      async function loadStoryCharacters(path, player) {
-        try {
-          const index = await loadJson(`${path}/characters/index.json`);
-          const entries = await Promise.all(
-            index.characters.map((entry) => loadJson(`${path}/characters/${entry.file}`))
-          );
-          return entries;
-        } catch (error) {
-          return [player];
-        }
-      }
-
-      function buildKeywordIndex() {
+      function buildKeywordIndex({ storyId, theme, world, factions, characters }) {
         const keywords = [];
-        if (currentFactions && Array.isArray(currentFactions.factions)) {
-          currentFactions.factions.forEach((faction) => {
-            const image = getImage("faction", currentStoryId, faction.id, defaultItemImage);
+        if (factions && Array.isArray(factions.factions)) {
+          factions.factions.forEach((faction) => {
+            const image = getImage("faction", storyId, faction.id, defaultItemImage);
             const terms = [faction.name].concat(faction.aliases || []);
             terms.forEach((term) => {
               keywords.push({
@@ -656,9 +328,9 @@
             });
           });
         }
-        if (currentWorld && Array.isArray(currentWorld.locations)) {
-          currentWorld.locations.forEach((loc) => {
-            const image = getImage("location", currentStoryId, loc.id, defaultItemImage);
+        if (world && Array.isArray(world.locations)) {
+          world.locations.forEach((loc) => {
+            const image = getImage("location", storyId, loc.id, defaultItemImage);
             const terms = [loc.name].concat(loc.aliases || []);
             terms.forEach((term) => {
               keywords.push({
@@ -670,10 +342,10 @@
             });
           });
         }
-        const reusableFactions = reusableFactionsCatalog && reusableFactionsCatalog.themes && reusableFactionsCatalog.themes[currentStoryTheme];
+        const reusableFactions = reusableFactionsCatalog && reusableFactionsCatalog.themes && reusableFactionsCatalog.themes[theme];
         if (reusableFactions && Array.isArray(reusableFactions.factions)) {
           reusableFactions.factions.forEach((faction) => {
-            const image = getImage("faction-global", currentStoryTheme, faction.id, defaultItemImage);
+            const image = getImage("faction-global", theme, faction.id, defaultItemImage);
             const terms = [faction.name].concat(faction.aliases || []);
             terms.forEach((term) => {
               keywords.push({
@@ -685,10 +357,10 @@
             });
           });
         }
-        const reusableLocations = reusableLocationsCatalog && reusableLocationsCatalog.themes && reusableLocationsCatalog.themes[currentStoryTheme];
+        const reusableLocations = reusableLocationsCatalog && reusableLocationsCatalog.themes && reusableLocationsCatalog.themes[theme];
         if (reusableLocations && Array.isArray(reusableLocations.locations)) {
           reusableLocations.locations.forEach((loc) => {
-            const image = getImage("location-global", currentStoryTheme, loc.id, defaultItemImage);
+            const image = getImage("location-global", theme, loc.id, defaultItemImage);
             const terms = [loc.name].concat(loc.aliases || []);
             terms.forEach((term) => {
               keywords.push({
@@ -700,9 +372,9 @@
             });
           });
         }
-        if (currentCharacters) {
-          currentCharacters.forEach((char) => {
-            const image = getStoryCharacterImage(char.id);
+        if (Array.isArray(characters)) {
+          characters.forEach((char) => {
+            const image = getImage("story-character", storyId, char.id, defaultCharacterImage);
             keywords.push({
               term: char.name,
               name: char.name,
@@ -711,6 +383,7 @@
             });
           });
         }
+
         const deduped = [];
         const seen = new Set();
         keywords.forEach((entry) => {
@@ -722,7 +395,6 @@
         });
         keywordLookup = new Map(deduped.map((entry) => [entry.term, entry]));
         keywordRegex = buildKeywordRegex(deduped.map((entry) => entry.term));
-        return deduped;
       }
 
       function injectKeywords(text) {
@@ -754,38 +426,35 @@
           .replace(/'/g, "&#39;");
       }
 
-      async function uploadImage(file) {
-        if (uploadInFlight) return null;
-        uploadInFlight = true;
+      function getImage(type, scope, id, fallback) {
+        if (!type || !scope || !id) return fallback;
+        const key = `image:${type}:${scope}:${id}`;
+        const stored = localStorage.getItem(key);
+        if (stored) return stored;
+        return fallback;
+      }
+
+      function showLoadError(error) {
+        const message = `
+          <p><strong>Stories could not be loaded.</strong></p>
+          <p>Open this UI from a local server so the browser can read JSON files.</p>
+          <p>Example: <code>python -m http.server</code> then visit <code>http://localhost:8000/web/</code>.</p>
+        `;
+        document.getElementById("stories").innerHTML = message;
+        document.getElementById("story-meta").innerHTML = message;
+        console.error(error);
+      }
+
+      async function init() {
         try {
-          const dataUrl = await readAsDataUrl(file);
-          const response = await fetch("/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dataUrl, filename: file.name })
-          });
-          if (!response.ok) {
-            throw new Error("Upload failed");
-          }
-          const payload = await response.json();
-          return payload.path;
+          const index = await loadJson("../data/index.json");
+          renderStoryList(index.stories);
         } catch (error) {
-          console.error(error);
-          alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
-          return null;
-        } finally {
-          uploadInFlight = false;
+          showLoadError(error);
         }
       }
 
-      function readAsDataUrl(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
-      }
+      init();
     </script>
   </body>
 </html>
