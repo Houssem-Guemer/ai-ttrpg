@@ -338,11 +338,12 @@
         const container = document.getElementById("story-meta");
         container.innerHTML = `
           <div class="pill">${story.genre}</div>
-          <p><strong>Scene:</strong> ${story.currentScene}</p>
-          <p>${story.summary}</p>
+          <p><strong>Scene:</strong> ${injectKeywords(escapeHtml(story.currentScene))}</p>
+          <p>${injectKeywords(escapeHtml(story.summary))}</p>
           <p class="section-title">Narrator style</p>
-          <p>${story.narratorStyle}</p>
+          <p>${injectKeywords(escapeHtml(story.narratorStyle))}</p>
         `;
+        attachHover(container);
       }
 
       function renderWorld(world, factions) {
