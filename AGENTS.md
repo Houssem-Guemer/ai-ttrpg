@@ -28,6 +28,7 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 - Location dictionary: theme -> locations (id, name, description, defaultImage, aliases[]).
 - Log entry: turn, speaker, text, timestamp.
 - Relationship notes: track faction/NPC attitude toward the player (friendly/neutral/hostile) in the relevant JSON files.
+- Keep descriptions and aliases up to date as new canon is learned (items, factions, locations, characters, monsters).
 
 ## Narration Workflow
 1) For new stories/games, use the start-story skill to run a structured setup. Ask for theme and setting, then the player's appearance and background. Ask if the player wants to introduce other characters (you will manage them) and whether they are present now or can be met later. Only accept player overrides during this setup phase.
