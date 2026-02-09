@@ -1,0 +1,5 @@
+data/stories/*
+!data/stories/starter-fantasy/
+!data/stories/starter-fantasy/**
+.idea
+.idea/*

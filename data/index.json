@@ -1,0 +1,10 @@
+{
+  "stories": [
+    {
+      "id": "starter-fantasy",
+      "title": "Whispering Pines",
+      "genre": "fantasy",
+      "path": "data/stories/starter-fantasy"
+    }
+  ]
+}

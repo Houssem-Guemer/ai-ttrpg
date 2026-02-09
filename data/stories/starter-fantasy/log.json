@@ -1,0 +1,44 @@
+[
+  {
+    "turn": 1,
+    "speaker": "Narrator",
+    "text": "Rain patters against the windows of the Lanternrest Inn as travelers murmur about pale lights in the pines.",
+    "timestamp": "2026-02-09T14:55:00Z"
+  },
+  {
+    "turn": 2,
+    "speaker": "Hashibee",
+    "text": "An ageless sage with no memory of their past steps into the inn, seeking bearings in the warm light.",
+    "timestamp": "2026-02-09T15:02:00Z"
+  },
+  {
+    "turn": 3,
+    "speaker": "Hashibee",
+    "text": "I ask the innkeeper for a drink and where we are.",
+    "timestamp": "2026-02-09T15:03:00Z"
+  },
+  {
+    "turn": 4,
+    "speaker": "Hashibee",
+    "text": "What would I need from you? Why would any traveler come to this place?",
+    "timestamp": "2026-02-09T15:04:00Z"
+  },
+  {
+    "turn": 5,
+    "speaker": "Hashibee",
+    "text": "What are these lights?",
+    "timestamp": "2026-02-09T15:05:00Z"
+  },
+  {
+    "turn": 6,
+    "speaker": "Hashibee",
+    "text": "The Pinewardens? Who are they?",
+    "timestamp": "2026-02-09T15:06:00Z"
+  },
+  {
+    "turn": 7,
+    "speaker": "Narrator",
+    "text": "\"Rangers,\" the innkeeper says. \"Locals who know the pines better than their own families. They keep the road clear, track wolves, settle disputes. Their leader, Kael, has not shown his face in days.\" The trader nods. \"They are the only ones who walk that road and live.\"",
+    "timestamp": "2026-02-09T15:07:00Z"
+  }
+]

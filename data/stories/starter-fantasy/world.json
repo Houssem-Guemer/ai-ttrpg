@@ -1,0 +1,23 @@
+{
+  "name": "Whispering Pines",
+  "era": "late medieval",
+  "description": "A temperate forest region with misty roads, old shrines, and a trading hamlet.",
+  "locations": [
+    {
+      "id": "lanternrest-inn",
+      "name": "Lanternrest Inn",
+      "type": "inn",
+      "notes": "Warm hearth, creaky stairs, and a watchful proprietor."
+    },
+    {
+      "id": "old-pine-road",
+      "name": "Old Pine Road",
+      "type": "road",
+      "notes": "A winding path where travelers report pale lights at dusk."
+    }
+  ],
+  "loreHooks": [
+    "An old shrine deep in the pines is said to answer questions at a cost.",
+    "A missing caravan never reached Lanternrest last week."
+  ]
+}

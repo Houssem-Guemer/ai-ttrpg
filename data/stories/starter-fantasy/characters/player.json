@@ -1,0 +1,20 @@
+{
+  "id": "player",
+  "name": "Hashibee",
+  "appearance": "Ageless, athletic build, calm eyes, travel-worn cloak over disciplined posture.",
+  "background": "An immortal sage who has forgotten their past, awake to countless skills but none of the reasons.",
+  "inventory": [
+    { "name": "Torch", "qty": 2, "notes": "Oil-soaked, good for an hour each." },
+    { "name": "Dagger", "qty": 1, "notes": "Simple, well-balanced." },
+    { "name": "Rations", "qty": 3, "notes": "Dried fruit and hardtack." }
+  ],
+  "stats": {
+    "str": 14,
+    "dex": 14,
+    "con": 15,
+    "int": 15,
+    "wis": 16,
+    "cha": 10
+  },
+  "status": "Amnesiac, composed, senses sharp."
+}
