@@ -1,0 +1,54 @@
+{
+  "themes": {
+    "fantasy": {
+      "monsters": [
+        {
+          "id": "pine-wolf",
+          "name": "Pine Wolf",
+          "description": "Lean forest wolf with pale eyes and a silent gait.",
+          "defaultImage": "../assets/other.png",
+          "stats": {
+            "str": 12,
+            "dex": 13,
+            "con": 11,
+            "int": 5,
+            "wis": 12,
+            "cha": 6
+          }
+        },
+        {
+          "id": "will-o-wisp",
+          "name": "Will-o'-Wisp",
+          "description": "A hovering light that lures travelers off the road.",
+          "defaultImage": "../assets/other.png",
+          "stats": {
+            "str": 4,
+            "dex": 16,
+            "con": 10,
+            "int": 8,
+            "wis": 14,
+            "cha": 12
+          }
+        }
+      ]
+    },
+    "sci-fi": {
+      "monsters": [
+        {
+          "id": "drone-scout",
+          "name": "Scout Drone",
+          "description": "A humming recon unit with a scanning lens.",
+          "defaultImage": "../assets/other.png",
+          "stats": {
+            "str": 8,
+            "dex": 15,
+            "con": 9,
+            "int": 10,
+            "wis": 11,
+            "cha": 4
+          }
+        }
+      ]
+    }
+  }
+}

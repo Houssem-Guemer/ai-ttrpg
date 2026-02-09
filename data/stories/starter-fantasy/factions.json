@@ -4,6 +4,7 @@
       "id": "pinewardens",
       "name": "Pinewardens",
       "description": "Local rangers who keep the forest paths safe.",
+      "aliases": ["Rangers", "Pinewardens"],
       "goals": "Find the source of the lights and restore safe travel.",
       "relations": "Respected by the inn and wary of outsiders."
     }

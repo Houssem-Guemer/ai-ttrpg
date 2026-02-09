@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Image Library</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Marcellus&family=Fira+Sans:wght@300;500;700&display=swap");
+
+      :root {
+        --bg: #f3efe6;
+        --ink: #2c2a27;
+        --accent: #c44e3b;
+        --accent-2: #2e6f7e;
+        --panel: #fffaf0;
+        --shadow: rgba(31, 27, 21, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Fira Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top left, #f8f1d8 0%, #f3efe6 40%, #efe3cf 100%);
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 2.5rem 6vw 1rem;
+      }
+
+      nav {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      nav a {
+        color: var(--accent-2);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(46, 111, 126, 0.5);
+      }
+
+      h1 {
+        font-family: "Marcellus", serif;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        margin: 0 0 0.5rem;
+        letter-spacing: 0.02em;
+      }
+
+      .subhead {
+        color: #5c554a;
+        max-width: 48rem;
+        line-height: 1.6;
+      }
+
+      main {
+        display: grid;
+        gap: 1.5rem;
+        padding: 1.5rem 6vw 4rem;
+      }
+
+      .panel {
+        background: var(--panel);
+        padding: 1.25rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 12px 30px var(--shadow);
+        animation: rise 0.8s ease both;
+      }
+
+      .panel h2 {
+        margin-top: 0;
+        font-family: "Marcellus", serif;
+        font-size: 1.3rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .card-grid {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .card {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.7rem;
+        border-radius: 12px;
+        background: rgba(44, 42, 39, 0.04);
+      }
+
+      .card img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .card button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.35rem 0.8rem;
+        font-size: 0.75rem;
+        background: rgba(196, 78, 59, 0.14);
+        color: var(--accent);
+        cursor: pointer;
+      }
+
+      .meta {
+        color: #5c554a;
+        font-size: 0.85rem;
+        margin-top: 0.2rem;
+      }
+
+      .selector {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      select {
+        padding: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        font-family: inherit;
+      }
+
+      .note {
+        font-size: 0.85rem;
+        color: #5c554a;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 640px) {
+        header,
+        main {
+          padding-left: 1.2rem;
+          padding-right: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Image Library</h1>
+      <p class="subhead">Upload images for items, monsters, factions, locations, and characters. Images are stored locally in your browser and appear across the UI.</p>
+      <nav>
+        <a href="index.html">Back to Console</a>
+      </nav>
+    </header>
+    <main>
+      <section class="panel selector">
+        <label for="story-select">Story Selection</label>
+          <select id="story-select">
+          <option value="">Select a story</option>
+        </select>
+        <div class="note" id="story-note">Pick a story to load story-specific factions, locations, and characters.</div>
+      </section>
+      <section class="grid">
+        <div class="panel">
+          <h2>Items (Theme)</h2>
+          <div id="items">Select a story.</div>
+        </div>
+        <div class="panel">
+          <h2>Monsters (Theme)</h2>
+          <div id="monsters">Select a story.</div>
+        </div>
+        <div class="panel">
+          <h2>Reusable Characters (Theme)</h2>
+          <div id="reusable-characters">Select a story.</div>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="panel">
+          <h2>Reusable Factions (Theme)</h2>
+          <div id="reusable-factions">Select a story.</div>
+        </div>
+        <div class="panel">
+          <h2>Reusable Locations (Theme)</h2>
+          <div id="reusable-locations">Select a story.</div>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="panel">
+          <h2>Factions (Story)</h2>
+          <div id="factions">Select a story.</div>
+        </div>
+        <div class="panel">
+          <h2>Locations (Story)</h2>
+          <div id="locations">Select a story.</div>
+        </div>
+        <div class="panel">
+          <h2>Characters (Story)</h2>
+          <div id="story-characters">Select a story.</div>
+        </div>
+      </section>
+    </main>
+    <input id="image-input" type="file" accept="image/*" style="display:none" />
+    <script>
+      const defaultItemImage = "../assets/other.png";
+      const defaultCharacterImage = "../assets/character-male.png";
+      const defaultFactionImage = "../assets/other.png";
+      const defaultLocationImage = "../assets/other.png";
+      const defaultMonsterImage = "../assets/other.png";
+
+      let itemsCatalog = null;
+      let monstersCatalog = null;
+      let charactersCatalog = null;
+      let reusableFactionsCatalog = null;
+      let reusableLocationsCatalog = null;
+      let currentStory = null;
+      let pendingUpload = null;
+      let uploadInFlight = false;
+
+      const input = document.getElementById("image-input");
+
+      async function loadJson(path) {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`Failed to load ${path}`);
+        }
+        return response.json();
+      }
+
+      function setImage(type, scope, id, dataUrl) {
+        if (!type || !scope || !id) return;
+        localStorage.setItem(`image:${type}:${scope}:${id}`, dataUrl);
+      }
+
+      function getImage(type, scope, id, fallback) {
+        if (!type || !scope || !id) return fallback;
+        return localStorage.getItem(`image:${type}:${scope}:${id}`) || fallback;
+      }
+
+      function setItemImage(itemId, theme, dataUrl) {
+        localStorage.setItem(`itemImage:${theme}:${itemId}`, dataUrl);
+        setImage("item", theme, itemId, dataUrl);
+      }
+
+      function getItemImage(itemId, theme, fallback) {
+        const legacy = localStorage.getItem(`itemImage:${theme}:${itemId}`);
+        if (legacy) return legacy;
+        return getImage("item", theme, itemId, fallback);
+      }
+
+      function attachUploadHandlers(container, type, scope, getImageFn, setImageFn) {
+        container.querySelectorAll("button[data-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            pendingUpload = {
+              type,
+              scope,
+              id: button.getAttribute("data-id"),
+              getImageFn,
+              setImageFn
+            };
+            input.value = "";
+            input.click();
+          });
+        });
+      }
+
+      function renderCardGrid(targetId, entries, options) {
+        const container = document.getElementById(targetId);
+        if (!entries || !entries.length) {
+          container.innerHTML = "No entries available.";
+          return;
+        }
+        const cards = entries
+          .map((entry) => {
+            const image = options.getImage(entry);
+            const description = entry.description || entry.notes || entry.background || entry.role || "";
+            const meta = description ? `<div class="meta">${description}</div>` : "";
+            return `
+              <div class="card">
+                <img src="${image}" alt="${entry.name}" />
+                <div>
+                  <strong>${entry.name}</strong>
+                  ${meta}
+                </div>
+                <button data-id="${entry.id}">Upload</button>
+              </div>
+            `;
+          })
+          .join("");
+        container.innerHTML = `<div class="card-grid">${cards}</div>`;
+        attachUploadHandlers(container, options.type, options.scope, options.getImage, options.setImage);
+      }
+
+      async function loadStory(story) {
+        if (!story) return;
+        currentStory = story;
+        const storyPath = `../${story.path}`;
+        const [world, factions, player] = await Promise.all([
+          loadJson(`${storyPath}/world.json`),
+          loadJson(`${storyPath}/factions.json`),
+          loadJson(`${storyPath}/characters/player.json`)
+        ]);
+        const theme = story.genre;
+        const themeItems = itemsCatalog.themes && itemsCatalog.themes[theme];
+        const themeMonsters = monstersCatalog.themes && monstersCatalog.themes[theme];
+        const themeCharacters = charactersCatalog.themes && charactersCatalog.themes[theme];
+        const themeFactions = reusableFactionsCatalog.themes && reusableFactionsCatalog.themes[theme];
+        const themeLocations = reusableLocationsCatalog.themes && reusableLocationsCatalog.themes[theme];
+
+        renderCardGrid("items", themeItems ? themeItems.items : [], {
+          type: "item",
+          scope: theme,
+          getImage: (entry) => getItemImage(entry.id, theme, entry.defaultImage || defaultItemImage),
+          setImage: (entry, dataUrl) => setItemImage(entry.id, theme, dataUrl)
+        });
+
+        renderCardGrid("monsters", themeMonsters ? themeMonsters.monsters : [], {
+          type: "monster",
+          scope: theme,
+          getImage: (entry) => getImage("monster", theme, entry.id, entry.defaultImage || defaultMonsterImage),
+          setImage: (entry, dataUrl) => setImage("monster", theme, entry.id, dataUrl)
+        });
+
+        renderCardGrid("reusable-characters", themeCharacters ? themeCharacters.characters : [], {
+          type: "character",
+          scope: theme,
+          getImage: (entry) => getImage("character", theme, entry.id, entry.defaultImage || defaultCharacterImage),
+          setImage: (entry, dataUrl) => setImage("character", theme, entry.id, dataUrl)
+        });
+
+        renderCardGrid("reusable-factions", themeFactions ? themeFactions.factions : [], {
+          type: "faction-global",
+          scope: theme,
+          getImage: (entry) => getImage("faction-global", theme, entry.id, entry.defaultImage || defaultFactionImage),
+          setImage: (entry, dataUrl) => setImage("faction-global", theme, entry.id, dataUrl)
+        });
+
+        renderCardGrid("reusable-locations", themeLocations ? themeLocations.locations : [], {
+          type: "location-global",
+          scope: theme,
+          getImage: (entry) => getImage("location-global", theme, entry.id, entry.defaultImage || defaultLocationImage),
+          setImage: (entry, dataUrl) => setImage("location-global", theme, entry.id, dataUrl)
+        });
+
+        const storyFactions = factions.factions || [];
+        renderCardGrid("factions", storyFactions, {
+          type: "faction",
+          scope: story.id,
+          getImage: (entry) => getImage("faction", story.id, entry.id, defaultFactionImage),
+          setImage: (entry, dataUrl) => setImage("faction", story.id, entry.id, dataUrl)
+        });
+
+        const storyLocations = world.locations || [];
+        renderCardGrid("locations", storyLocations, {
+          type: "location",
+          scope: story.id,
+          getImage: (entry) => getImage("location", story.id, entry.id, defaultLocationImage),
+          setImage: (entry, dataUrl) => setImage("location", story.id, entry.id, dataUrl)
+        });
+
+        const storyCharacters = await loadStoryCharacters(storyPath, player);
+        renderCardGrid("story-characters", storyCharacters, {
+          type: "story-character",
+          scope: story.id,
+          getImage: (entry) => getImage("story-character", story.id, entry.id, defaultCharacterImage),
+          setImage: (entry, dataUrl) => setImage("story-character", story.id, entry.id, dataUrl)
+        });
+      }
+
+      async function loadStoryCharacters(storyPath, player) {
+        try {
+          const index = await loadJson(`${storyPath}/characters/index.json`);
+          const entries = await Promise.all(
+            index.characters.map((entry) => loadJson(`${storyPath}/characters/${entry.file}`))
+          );
+          return entries.map((entry) => ({
+            id: entry.id,
+            name: entry.name,
+            description: entry.background || entry.appearance || "",
+            role: entry.role || ""
+          }));
+        } catch (error) {
+          return [
+            {
+              id: player.id,
+              name: player.name,
+              description: player.background || player.appearance || "",
+              role: "Player"
+            }
+          ];
+        }
+      }
+
+      function setupInputHandler() {
+        input.addEventListener("change", async (event) => {
+          const file = event.target.files && event.target.files[0];
+          if (!file || !pendingUpload) return;
+          const imagePath = await uploadImage(file);
+          if (!imagePath) return;
+          const { type, scope, id } = pendingUpload;
+          if (type === "item") {
+            setItemImage(id, scope, imagePath);
+          } else {
+            setImage(type, scope, id, imagePath);
+          }
+          pendingUpload = null;
+          loadStory(currentStory);
+        });
+      }
+
+      async function init() {
+        itemsCatalog = await loadJson("../data/items.json");
+        monstersCatalog = await loadJson("../data/monsters.json");
+        charactersCatalog = await loadJson("../data/characters.json");
+        reusableFactionsCatalog = await loadJson("../data/factions.json");
+        reusableLocationsCatalog = await loadJson("../data/locations.json");
+        const index = await loadJson("../data/index.json");
+        const select = document.getElementById("story-select");
+        index.stories.forEach((story) => {
+          const option = document.createElement("option");
+          option.value = story.id;
+          option.textContent = `${story.title} (${story.genre})`;
+          option.dataset.path = story.path;
+          option.dataset.genre = story.genre;
+          select.appendChild(option);
+        });
+        select.addEventListener("change", () => {
+          const selected = index.stories.find((story) => story.id === select.value);
+          if (selected) loadStory(selected);
+        });
+        setupInputHandler();
+      }
+
+      init();
+
+      async function uploadImage(file) {
+        if (uploadInFlight) return null;
+        uploadInFlight = true;
+        try {
+          const dataUrl = await readAsDataUrl(file);
+          const response = await fetch("/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dataUrl, filename: file.name })
+          });
+          if (!response.ok) {
+            throw new Error("Upload failed");
+          }
+          const payload = await response.json();
+          return payload.path;
+        } catch (error) {
+          console.error(error);
+          alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
+          return null;
+        } finally {
+          uploadInFlight = false;
+        }
+      }
+
+      function readAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+      }
+    </script>
+  </body>
+</html>

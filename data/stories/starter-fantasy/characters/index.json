@@ -1,0 +1,10 @@
+{
+  "characters": [
+    {
+      "id": "player",
+      "name": "Hashibee",
+      "file": "player.json",
+      "role": "Player"
+    }
+  ]
+}

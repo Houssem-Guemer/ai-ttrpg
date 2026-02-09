@@ -1,0 +1,57 @@
+{
+  "themes": {
+    "fantasy": {
+      "characters": [
+        {
+          "id": "innkeeper-mara",
+          "name": "Mara",
+          "role": "Innkeeper",
+          "description": "Lanternrest's steady-eyed proprietor who hears every rumor.",
+          "defaultImage": "../assets/character-female.png",
+          "stats": {
+            "str": 9,
+            "dex": 11,
+            "con": 12,
+            "int": 12,
+            "wis": 14,
+            "cha": 13
+          }
+        },
+        {
+          "id": "ranger-kael",
+          "name": "Kael",
+          "role": "Pinewarden Captain",
+          "description": "A quiet ranger who knows every trail in the pines.",
+          "defaultImage": "../assets/character-male.png",
+          "stats": {
+            "str": 12,
+            "dex": 15,
+            "con": 13,
+            "int": 11,
+            "wis": 14,
+            "cha": 10
+          }
+        }
+      ]
+    },
+    "sci-fi": {
+      "characters": [
+        {
+          "id": "engineer-nova",
+          "name": "Nova Reyes",
+          "role": "Ship Engineer",
+          "description": "Brilliant mechanic with a dry sense of humor.",
+          "defaultImage": "../assets/character-female.png",
+          "stats": {
+            "str": 9,
+            "dex": 12,
+            "con": 11,
+            "int": 16,
+            "wis": 10,
+            "cha": 12
+          }
+        }
+      ]
+    }
+  }
+}

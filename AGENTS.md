@@ -5,6 +5,11 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 
 ## Structure
 - data/index.json: list of available stories.
+- data/items.json: item dictionary by theme (name, description, default image).
+- data/monsters.json: monster dictionary by theme (stats, description, default image).
+- data/characters.json: reusable character dictionary by theme (major NPCs).
+- data/factions.json: reusable faction dictionary by theme (name, description, default image).
+- data/locations.json: reusable location dictionary by theme (name, description, default image).
 - data/stories/<storyId>/story.json: story metadata and current scene.
 - data/stories/<storyId>/world.json: world details (locations, lore hooks).
 - data/stories/<storyId>/factions.json: guilds/groups/organizations.
@@ -15,7 +20,12 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 
 ## Data Model (Minimal)
 - Character: id, name, appearance, background, inventory[], stats{}, status.
-- Inventory item: name, qty, notes.
+- Inventory item: itemId, name, qty, notes.
+- Item dictionary: theme -> items (id, name, description, defaultImage).
+- Monster dictionary: theme -> monsters (id, name, description, defaultImage, stats).
+- Character dictionary: theme -> characters (id, name, role, description, defaultImage, stats).
+- Faction dictionary: theme -> factions (id, name, description, defaultImage, aliases[]).
+- Location dictionary: theme -> locations (id, name, description, defaultImage, aliases[]).
 - Log entry: turn, speaker, text, timestamp.
 - Relationship notes: track faction/NPC attitude toward the player (friendly/neutral/hostile) in the relevant JSON files.
 

@@ -1,0 +1,33 @@
+{
+  "themes": {
+    "fantasy": {
+      "factions": [
+        {
+          "id": "free-companions",
+          "name": "Free Companions",
+          "description": "A loose band of mercenaries who sell their blades for fair coin.",
+          "defaultImage": "../assets/other.png",
+          "aliases": ["Companions", "Mercenaries"]
+        },
+        {
+          "id": "scribe-accord",
+          "name": "Scribe Accord",
+          "description": "Traveling chroniclers who barter stories for safe passage.",
+          "defaultImage": "../assets/other.png",
+          "aliases": ["Scribes"]
+        }
+      ]
+    },
+    "sci-fi": {
+      "factions": [
+        {
+          "id": "void-cartel",
+          "name": "Void Cartel",
+          "description": "Smugglers who control the fringe routes.",
+          "defaultImage": "../assets/other.png",
+          "aliases": ["Cartel"]
+        }
+      ]
+    }
+  }
+}
