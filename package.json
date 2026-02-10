@@ -10,8 +10,8 @@
     "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^38",
-    "electron-builder": "^24.13.3"
+    "electron": "^40",
+    "electron-builder": "^26"
   },
   "build": {
     "appId": "com.codex.dndnarrator",
