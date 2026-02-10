@@ -469,7 +469,14 @@
           const response = await fetch("/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dataUrl, filename: file.name })
+            body: JSON.stringify({
+              dataUrl,
+              filename: file.name,
+              theme: pendingUpload.scope,
+              type: pendingUpload.type,
+              id: pendingUpload.id,
+              name: pendingUpload.name
+            })
           });
           if (!response.ok) {
             throw new Error("Upload failed");

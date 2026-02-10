@@ -35,7 +35,13 @@ function safeJoin(base, target) {
 
 function serveStatic(req, res) {
   const urlPath = decodeURIComponent(req.url.split("?")[0]);
-  const filePath = safeJoin(root, urlPath === "/" ? "/web/index.html" : urlPath);
+  const rewrittenPath = (() => {
+    if (urlPath === "/" || urlPath === "/index.html") return "/web/index.html";
+    if (urlPath === "/story.html") return "/web/story.html";
+    if (urlPath === "/library.html") return "/web/library.html";
+    return urlPath;
+  })();
+  const filePath = safeJoin(root, rewrittenPath);
   if (!filePath) return send(res, 400, "Bad path");
 
   fs.stat(filePath, (err, stat) => {
@@ -74,6 +80,10 @@ function handleUpload(req, res) {
   parseJson(req, res, (payload) => {
     const dataUrl = payload && payload.dataUrl;
     const originalName = payload && payload.filename;
+    const theme = payload && payload.theme;
+    const type = payload && payload.type;
+    const id = payload && payload.id;
+    const name = payload && payload.name;
     if (!dataUrl || typeof dataUrl !== "string") {
       return send(res, 400, "Missing dataUrl");
     }
@@ -86,15 +96,29 @@ function handleUpload(req, res) {
     const mime = match[1];
     const data = match[2];
     const ext = mime === "image/jpeg" ? ".jpg" : mime === "image/png" ? ".png" : mime === "image/webp" ? ".webp" : mime === "image/gif" ? ".gif" : ".png";
-    const safeName = (originalName || "image").replace(/[^a-zA-Z0-9-_]/g, "");
+    const safeTheme = (theme || "global").replace(/[^a-zA-Z0-9-_]/g, "");
+    const safeType = (type || "image").replace(/[^a-zA-Z0-9-_]/g, "");
+    const baseName = (name || id || originalName || "image").toString().replace(/[^a-zA-Z0-9-_]/g, "");
+    const safeName = baseName || "image";
     const unique = crypto.randomBytes(6).toString("hex");
-    const filename = `${safeName || "image"}-${unique}${ext}`;
-    const filePath = path.join(uploadDir, filename);
+    const filename = `${safeName}-${safeTheme}-${unique}${ext}`;
+    const themedUploadDir = path.join(uploadDir, safeTheme, safeType);
+    const filePath = path.join(themedUploadDir, filename);
+    console.log("Upload request:", { filename, filePath, mime, size: data.length });
 
-    fs.writeFile(filePath, Buffer.from(data, "base64"), (err) => {
-      if (err) return send(res, 500, "Failed to write file");
-      const publicPath = `/assets/uploads/${filename}`;
-      send(res, 200, JSON.stringify({ path: publicPath }), { "Content-Type": "application/json" });
+    fs.mkdir(themedUploadDir, { recursive: true }, (dirErr) => {
+      if (dirErr) {
+        console.error("Upload dir error:", dirErr);
+        return send(res, 500, "Failed to create upload directory");
+      }
+      fs.writeFile(filePath, Buffer.from(data, "base64"), (err) => {
+        if (err) {
+          console.error("Upload write error:", err);
+          return send(res, 500, "Failed to write file");
+        }
+        const publicPath = `/assets/uploads/${safeTheme}/${safeType}/${filename}`;
+        send(res, 200, JSON.stringify({ path: publicPath }), { "Content-Type": "application/json" });
+      });
     });
   });
 }
