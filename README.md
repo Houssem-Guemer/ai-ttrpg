@@ -51,25 +51,6 @@ node scripts/roll_dice.js risky
 4) Start playing
 Tell the narrator what your character does. The narrator will update JSON canon as the story progresses.
 
-## Desktop App (Electron)
-1) Install dependencies
-```bash
-npm install
-```
-
-2) Run the desktop app
-```bash
-npm run start
-```
-
-3) Package the app
-```bash
-npm run dist
-```
-The packaged app will appear in `electron-dist/`.
-Image uploads in the desktop app are saved under your Electron user data folder when packaged.
-In dev (running from source), uploads go to `assets/uploads/`.
-
 ## Items & Images
 - Items are defined in `data/items.json` per theme (e.g., fantasy vs sci-fi).
 - Inventory entries reference items by `itemId`.

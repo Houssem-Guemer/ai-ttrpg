@@ -3,5 +3,3 @@ data/stories/*
 !data/stories/starter-fantasy/**
 .idea
 .idea/*
-node_modules/
-electron-dist/

@@ -242,7 +242,6 @@
       let currentStory = null;
       let pendingUpload = null;
       let uploadInFlight = false;
-      const isElectron = /Electron/i.test(navigator.userAgent || "");
 
       const input = document.getElementById("image-input");
 
@@ -460,17 +459,6 @@
         setupInputHandler();
       }
 
-      function registerDataWatcher() {
-        if (window.electronAPI && window.electronAPI.onDataUpdated) {
-          window.electronAPI.onDataUpdated(() => {
-            if (currentStory) {
-              loadStory(currentStory);
-            }
-          });
-        }
-      }
-
-      registerDataWatcher();
       init();
 
       async function uploadImage(file) {
@@ -478,19 +466,6 @@
         uploadInFlight = true;
         try {
           const dataUrl = await readAsDataUrl(file);
-          if (isElectron) {
-            if (!window.electronAPI || !window.electronAPI.saveImage) {
-              throw new Error("Electron API not available.");
-            }
-            return await window.electronAPI.saveImage({
-              dataUrl,
-              filename: file.name,
-              type: pendingUpload.type,
-              scope: pendingUpload.scope,
-              id: pendingUpload.id,
-              name: pendingUpload.name
-            });
-          }
           const response = await fetch("/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -503,11 +478,7 @@
           return payload.path;
         } catch (error) {
           console.error(error);
-          if (!isElectron) {
-            alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
-          } else {
-            alert("Upload failed. Try again or restart the app.");
-          }
+          alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
           return null;
         } finally {
           uploadInFlight = false;
