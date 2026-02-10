@@ -460,6 +460,17 @@
         setupInputHandler();
       }
 
+      function registerDataWatcher() {
+        if (window.electronAPI && window.electronAPI.onDataUpdated) {
+          window.electronAPI.onDataUpdated(() => {
+            if (currentStory) {
+              loadStory(currentStory);
+            }
+          });
+        }
+      }
+
+      registerDataWatcher();
       init();
 
       async function uploadImage(file) {

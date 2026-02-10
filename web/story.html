@@ -678,6 +678,12 @@
         }
       }
 
+      function registerDataWatcher() {
+        if (window.electronAPI && window.electronAPI.onDataUpdated) {
+          window.electronAPI.onDataUpdated(() => window.location.reload());
+        }
+      }
+
       async function init() {
         const params = new URLSearchParams(window.location.search);
         const storyId = params.get("story");
@@ -726,6 +732,7 @@
         renderItemsPanel(themeItems);
       }
 
+      registerDataWatcher();
       init().catch((error) => {
         console.error(error);
         document.getElementById("story-meta").innerHTML = "Failed to load story.";

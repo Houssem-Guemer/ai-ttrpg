@@ -47,6 +47,7 @@ function createWindow() {
   });
 
   win.loadURL("app://./web/index.html");
+  return win;
 }
 
 function sanitizeFilename(value) {
@@ -106,9 +107,33 @@ function registerIpc() {
   });
 }
 
+let reloadTimer = null;
+
+function broadcastDataUpdated() {
+  if (reloadTimer) clearTimeout(reloadTimer);
+  reloadTimer = setTimeout(() => {
+    BrowserWindow.getAllWindows().forEach((win) => {
+      win.webContents.send("data-updated");
+    });
+  }, 250);
+}
+
+function registerWatchers() {
+  const dataDir = path.join(ROOT_DIR, "data");
+  try {
+    const watcher = fs.watch(dataDir, { recursive: true }, () => {
+      broadcastDataUpdated();
+    });
+    app.on("before-quit", () => watcher.close());
+  } catch (error) {
+    console.error("Watcher setup failed:", error);
+  }
+}
+
 app.whenReady().then(() => {
   registerAppProtocol();
   registerIpc();
+  registerWatchers();
   createWindow();
 
   app.on("activate", () => {

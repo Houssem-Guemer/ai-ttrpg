@@ -464,6 +464,12 @@
         console.error(error);
       }
 
+      function registerDataWatcher() {
+        if (window.electronAPI && window.electronAPI.onDataUpdated) {
+          window.electronAPI.onDataUpdated(() => window.location.reload());
+        }
+      }
+
       async function init() {
         try {
           const index = await loadJson("../data/index.json");
@@ -473,6 +479,7 @@
         }
       }
 
+      registerDataWatcher();
       init();
     </script>
   </body>
