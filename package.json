@@ -1,5 +1,5 @@
 {
-  "name": "codex-dnd-narrator",
+  "name": "ai-ttrpg",
   "version": "0.1.0",
   "description": "Lightweight, file-backed DnD-style narrator engine with a desktop UI.",
   "main": "main.js",
