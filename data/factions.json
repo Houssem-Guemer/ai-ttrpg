@@ -6,14 +6,14 @@
           "id": "free-companions",
           "name": "Free Companions",
           "description": "A loose band of mercenaries who sell their blades for fair coin.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "aliases": ["Companions", "Mercenaries"]
         },
         {
           "id": "scribe-accord",
           "name": "Scribe Accord",
           "description": "Traveling chroniclers who barter stories for safe passage.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "aliases": ["Scribes"]
         }
       ]
@@ -24,7 +24,7 @@
           "id": "void-cartel",
           "name": "Void Cartel",
           "description": "Smugglers who control the fringe routes.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/sci-fi/other.png",
           "aliases": ["Cartel"]
         }
       ]

@@ -285,8 +285,22 @@
       <div class="desc"></div>
     </div>
     <script>
-      const defaultItemImage = "../assets/other.png";
-      const defaultCharacterImage = "../assets/character-male.png";
+      const themeDefaults = {
+        fantasy: {
+          item: "../assets/themes/fantasy/other.png",
+          character: "../assets/themes/fantasy/character-male.png"
+        },
+        "sci-fi": {
+          item: "../assets/themes/sci-fi/other.png",
+          character: "../assets/themes/sci-fi/character-male.png"
+        }
+      };
+      const fallbackTheme = "fantasy";
+
+      function getThemeDefault(theme, key) {
+        const themeEntry = themeDefaults[theme] || themeDefaults[fallbackTheme];
+        return themeEntry[key] || themeDefaults[fallbackTheme][key];
+      }
       let itemsCatalog = null;
       let charactersCatalog = null;
       let monstersCatalog = null;
@@ -323,6 +337,7 @@
 
       function renderWorld(world, factions) {
         const container = document.getElementById("world");
+        const defaultItemImage = getThemeDefault(currentStoryTheme, "item");
         const locations = world.locations
           .map((loc) => {
             const image = getImage("location", currentStoryId, loc.id, defaultItemImage);
@@ -468,14 +483,14 @@
       }
 
       function getItemImage(itemId, theme) {
-        if (!itemId || !theme) return defaultItemImage;
+        if (!itemId || !theme) return getThemeDefault(theme, "item");
         const key = `itemImage:${theme}:${itemId}`;
         const stored = localStorage.getItem(key);
         if (stored) return stored;
         const generalized = getImage("item", theme, itemId, null);
         if (generalized) return generalized;
         const item = findItem(itemId, theme);
-        return item && item.defaultImage ? item.defaultImage : defaultItemImage;
+        return item && item.defaultImage ? item.defaultImage : getThemeDefault(theme, "item");
       }
 
       function getItemDescription(itemId, theme) {
@@ -499,7 +514,7 @@
       }
 
       function getStoryCharacterImage(characterId) {
-        return getImage("story-character", currentStoryId, characterId, defaultCharacterImage);
+        return getImage("story-character", currentStoryId, characterId, getThemeDefault(currentStoryTheme, "character"));
       }
 
       function attachHover(container) {
@@ -507,9 +522,10 @@
         const tooltipImage = tooltip.querySelector("img");
         const tooltipTitle = tooltip.querySelector(".title");
         const tooltipDesc = tooltip.querySelector(".desc");
+        const fallbackImage = getThemeDefault(currentStoryTheme, "item");
         container.querySelectorAll(".hoverable").forEach((tag) => {
           tag.addEventListener("mouseenter", (event) => {
-            tooltipImage.src = tag.getAttribute("data-image") || defaultItemImage;
+            tooltipImage.src = tag.getAttribute("data-image") || fallbackImage;
             tooltipTitle.textContent = tag.getAttribute("data-name") || "Details";
             tooltipDesc.textContent = tag.getAttribute("data-description") || "";
             tooltip.style.display = "block";
@@ -536,6 +552,7 @@
       }
 
       function buildKeywordIndex() {
+        const defaultItemImage = getThemeDefault(currentStoryTheme, "item");
         const keywords = [];
         if (currentFactions && Array.isArray(currentFactions.factions)) {
           currentFactions.factions.forEach((faction) => {

@@ -6,7 +6,7 @@
           "id": "pine-wolf",
           "name": "Pine Wolf",
           "description": "Lean forest wolf with pale eyes and a silent gait.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "stats": {
             "str": 12,
             "dex": 13,
@@ -20,7 +20,7 @@
           "id": "will-o-wisp",
           "name": "Will-o'-Wisp",
           "description": "A hovering light that lures travelers off the road.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "stats": {
             "str": 4,
             "dex": 16,
@@ -38,7 +38,7 @@
           "id": "drone-scout",
           "name": "Scout Drone",
           "description": "A humming recon unit with a scanning lens.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/sci-fi/other.png",
           "stats": {
             "str": 8,
             "dex": 15,

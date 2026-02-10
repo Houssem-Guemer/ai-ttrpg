@@ -6,14 +6,14 @@
           "id": "crossroads-shrine",
           "name": "Crossroads Shrine",
           "description": "A mossy stone shrine where travelers leave coins for safe journeys.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "aliases": ["Shrine"]
         },
         {
           "id": "rusted-bridge",
           "name": "Rusted Bridge",
           "description": "An old iron span over a foggy ravine, said to groan at dusk.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/fantasy/other.png",
           "aliases": ["Old Bridge"]
         }
       ]
@@ -24,7 +24,7 @@
           "id": "orbital-dock",
           "name": "Orion Dock",
           "description": "A crowded orbital port with flickering neon and long queues.",
-          "defaultImage": "../assets/other.png",
+          "defaultImage": "../assets/themes/sci-fi/other.png",
           "aliases": ["Dock"]
         }
       ]

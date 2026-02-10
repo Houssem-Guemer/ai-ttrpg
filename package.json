@@ -1,0 +1,31 @@
+{
+  "name": "codex-dnd-narrator",
+  "version": "0.1.0",
+  "description": "Lightweight, file-backed DnD-style narrator engine with a desktop UI.",
+  "main": "main.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^38",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.codex.dndnarrator",
+    "productName": "Codex Narrator",
+    "directories": {
+      "output": "electron-dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "web/**/*",
+      "data/**/*",
+      "assets/**/*",
+      "scripts/**/*"
+    ]
+  }
+}

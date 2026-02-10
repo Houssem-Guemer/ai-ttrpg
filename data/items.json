@@ -6,31 +6,31 @@
           "id": "torch",
           "name": "Torch",
           "description": "Oil-soaked torch for light.",
-          "defaultImage": "../assets/other.png"
+          "defaultImage": "../assets/themes/fantasy/other.png"
         },
         {
           "id": "dagger",
           "name": "Dagger",
           "description": "Short blade, balanced for quick strikes.",
-          "defaultImage": "../assets/weapon.png"
+          "defaultImage": "../assets/themes/fantasy/weapon.png"
         },
         {
           "id": "rations",
           "name": "Rations",
           "description": "Dried food and hardtack for travel.",
-          "defaultImage": "../assets/other.png"
+          "defaultImage": "../assets/themes/fantasy/other.png"
         },
         {
           "id": "shield",
           "name": "Shield",
           "description": "Wooden shield with iron rim.",
-          "defaultImage": "../assets/shield.png"
+          "defaultImage": "../assets/themes/fantasy/shield.png"
         },
         {
           "id": "leather-armor",
           "name": "Leather Armor",
           "description": "Light armor for agile fighters.",
-          "defaultImage": "../assets/armor.png"
+          "defaultImage": "../assets/themes/fantasy/armor.png"
         }
       ]
     },
@@ -40,19 +40,19 @@
           "id": "plasma-knife",
           "name": "Plasma Knife",
           "description": "A compact blade with a humming energy edge.",
-          "defaultImage": "../assets/weapon.png"
+          "defaultImage": "../assets/themes/sci-fi/weapon.png"
         },
         {
           "id": "medkit",
           "name": "Field Medkit",
           "description": "Quick-seal patches and nanogel.",
-          "defaultImage": "../assets/other.png"
+          "defaultImage": "../assets/themes/sci-fi/other.png"
         },
         {
           "id": "shield-emitter",
           "name": "Shield Emitter",
           "description": "Wrist-mounted kinetic barrier.",
-          "defaultImage": "../assets/shield.png"
+          "defaultImage": "../assets/themes/sci-fi/shield.png"
         }
       ]
     }

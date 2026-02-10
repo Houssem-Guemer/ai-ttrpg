@@ -7,7 +7,7 @@
           "name": "Mara",
           "role": "Innkeeper",
           "description": "Lanternrest's steady-eyed proprietor who hears every rumor.",
-          "defaultImage": "../assets/character-female.png",
+          "defaultImage": "../assets/themes/fantasy/character-female.png",
           "stats": {
             "str": 9,
             "dex": 11,
@@ -22,7 +22,7 @@
           "name": "Kael",
           "role": "Pinewarden Captain",
           "description": "A quiet ranger who knows every trail in the pines.",
-          "defaultImage": "../assets/character-male.png",
+          "defaultImage": "../assets/themes/fantasy/character-male.png",
           "stats": {
             "str": 12,
             "dex": 15,
@@ -41,7 +41,7 @@
           "name": "Nova Reyes",
           "role": "Ship Engineer",
           "description": "Brilliant mechanic with a dry sense of humor.",
-          "defaultImage": "../assets/character-female.png",
+          "defaultImage": "../assets/themes/sci-fi/character-female.png",
           "stats": {
             "str": 9,
             "dex": 12,

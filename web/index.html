@@ -202,14 +202,29 @@
       <div class="desc"></div>
     </div>
     <script>
-      const defaultItemImage = "../assets/other.png";
-      const defaultCharacterImage = "../assets/character-male.png";
+      const themeDefaults = {
+        fantasy: {
+          item: "../assets/themes/fantasy/other.png",
+          character: "../assets/themes/fantasy/character-male.png"
+        },
+        "sci-fi": {
+          item: "../assets/themes/sci-fi/other.png",
+          character: "../assets/themes/sci-fi/character-male.png"
+        }
+      };
+      const fallbackTheme = "fantasy";
+
+      function getThemeDefault(theme, key) {
+        const themeEntry = themeDefaults[theme] || themeDefaults[fallbackTheme];
+        return themeEntry[key] || themeDefaults[fallbackTheme][key];
+      }
       let itemsCatalog = null;
       let reusableFactionsCatalog = null;
       let reusableLocationsCatalog = null;
       let keywordRegex = null;
       let keywordLookup = new Map();
       let activeStoryId = null;
+      let activeStoryTheme = fallbackTheme;
 
       async function loadJson(path) {
         const response = await fetch(path);
@@ -252,9 +267,10 @@
         const tooltipImage = tooltip.querySelector("img");
         const tooltipTitle = tooltip.querySelector(".title");
         const tooltipDesc = tooltip.querySelector(".desc");
+        const fallbackImage = getThemeDefault(activeStoryTheme, "item");
         container.querySelectorAll(".hoverable").forEach((tag) => {
           tag.addEventListener("mouseenter", (event) => {
-            tooltipImage.src = tag.getAttribute("data-image") || defaultItemImage;
+            tooltipImage.src = tag.getAttribute("data-image") || fallbackImage;
             tooltipTitle.textContent = tag.getAttribute("data-name") || "Details";
             tooltipDesc.textContent = tag.getAttribute("data-description") || "";
             tooltip.style.display = "block";
@@ -282,6 +298,7 @@
 
       async function loadStorySnapshot(story) {
         activeStoryId = story.id;
+        activeStoryTheme = story.genre || fallbackTheme;
         const [storyData, world, factions, player] = await Promise.all([
           loadJson(`../${story.path}/story.json`),
           loadJson(`../${story.path}/world.json`),
@@ -313,6 +330,8 @@
       }
 
       function buildKeywordIndex({ storyId, theme, world, factions, characters }) {
+        const defaultItemImage = getThemeDefault(theme, "item");
+        const defaultCharacterImage = getThemeDefault(theme, "character");
         const keywords = [];
         if (factions && Array.isArray(factions.factions)) {
           factions.factions.forEach((faction) => {

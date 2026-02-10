@@ -217,11 +217,22 @@
     </main>
     <input id="image-input" type="file" accept="image/*" style="display:none" />
     <script>
-      const defaultItemImage = "../assets/other.png";
-      const defaultCharacterImage = "../assets/character-male.png";
-      const defaultFactionImage = "../assets/other.png";
-      const defaultLocationImage = "../assets/other.png";
-      const defaultMonsterImage = "../assets/other.png";
+      const themeDefaults = {
+        fantasy: {
+          item: "../assets/themes/fantasy/other.png",
+          character: "../assets/themes/fantasy/character-male.png"
+        },
+        "sci-fi": {
+          item: "../assets/themes/sci-fi/other.png",
+          character: "../assets/themes/sci-fi/character-male.png"
+        }
+      };
+      const fallbackTheme = "fantasy";
+
+      function getThemeDefault(theme, key) {
+        const themeEntry = themeDefaults[theme] || themeDefaults[fallbackTheme];
+        return themeEntry[key] || themeDefaults[fallbackTheme][key];
+      }
 
       let itemsCatalog = null;
       let monstersCatalog = null;
@@ -231,6 +242,7 @@
       let currentStory = null;
       let pendingUpload = null;
       let uploadInFlight = false;
+      const isElectron = /Electron/i.test(navigator.userAgent || "");
 
       const input = document.getElementById("image-input");
 
@@ -270,6 +282,7 @@
               type,
               scope,
               id: button.getAttribute("data-id"),
+              name: button.getAttribute("data-name"),
               getImageFn,
               setImageFn
             };
@@ -290,6 +303,7 @@
             const image = options.getImage(entry);
             const description = entry.description || entry.notes || entry.background || entry.role || "";
             const meta = description ? `<div class="meta">${description}</div>` : "";
+            const safeName = escapeHtml(entry.name || "");
             return `
               <div class="card">
                 <img src="${image}" alt="${entry.name}" />
@@ -297,7 +311,7 @@
                   <strong>${entry.name}</strong>
                   ${meta}
                 </div>
-                <button data-id="${entry.id}">Upload</button>
+                <button data-id="${entry.id}" data-name="${safeName}">Upload</button>
               </div>
             `;
           })
@@ -325,35 +339,35 @@
         renderCardGrid("items", themeItems ? themeItems.items : [], {
           type: "item",
           scope: theme,
-          getImage: (entry) => getItemImage(entry.id, theme, entry.defaultImage || defaultItemImage),
+          getImage: (entry) => getItemImage(entry.id, theme, entry.defaultImage || getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setItemImage(entry.id, theme, dataUrl)
         });
 
         renderCardGrid("monsters", themeMonsters ? themeMonsters.monsters : [], {
           type: "monster",
           scope: theme,
-          getImage: (entry) => getImage("monster", theme, entry.id, entry.defaultImage || defaultMonsterImage),
+          getImage: (entry) => getImage("monster", theme, entry.id, entry.defaultImage || getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setImage("monster", theme, entry.id, dataUrl)
         });
 
         renderCardGrid("reusable-characters", themeCharacters ? themeCharacters.characters : [], {
           type: "character",
           scope: theme,
-          getImage: (entry) => getImage("character", theme, entry.id, entry.defaultImage || defaultCharacterImage),
+          getImage: (entry) => getImage("character", theme, entry.id, entry.defaultImage || getThemeDefault(theme, "character")),
           setImage: (entry, dataUrl) => setImage("character", theme, entry.id, dataUrl)
         });
 
         renderCardGrid("reusable-factions", themeFactions ? themeFactions.factions : [], {
           type: "faction-global",
           scope: theme,
-          getImage: (entry) => getImage("faction-global", theme, entry.id, entry.defaultImage || defaultFactionImage),
+          getImage: (entry) => getImage("faction-global", theme, entry.id, entry.defaultImage || getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setImage("faction-global", theme, entry.id, dataUrl)
         });
 
         renderCardGrid("reusable-locations", themeLocations ? themeLocations.locations : [], {
           type: "location-global",
           scope: theme,
-          getImage: (entry) => getImage("location-global", theme, entry.id, entry.defaultImage || defaultLocationImage),
+          getImage: (entry) => getImage("location-global", theme, entry.id, entry.defaultImage || getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setImage("location-global", theme, entry.id, dataUrl)
         });
 
@@ -361,7 +375,7 @@
         renderCardGrid("factions", storyFactions, {
           type: "faction",
           scope: story.id,
-          getImage: (entry) => getImage("faction", story.id, entry.id, defaultFactionImage),
+          getImage: (entry) => getImage("faction", story.id, entry.id, getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setImage("faction", story.id, entry.id, dataUrl)
         });
 
@@ -369,7 +383,7 @@
         renderCardGrid("locations", storyLocations, {
           type: "location",
           scope: story.id,
-          getImage: (entry) => getImage("location", story.id, entry.id, defaultLocationImage),
+          getImage: (entry) => getImage("location", story.id, entry.id, getThemeDefault(theme, "item")),
           setImage: (entry, dataUrl) => setImage("location", story.id, entry.id, dataUrl)
         });
 
@@ -377,7 +391,7 @@
         renderCardGrid("story-characters", storyCharacters, {
           type: "story-character",
           scope: story.id,
-          getImage: (entry) => getImage("story-character", story.id, entry.id, defaultCharacterImage),
+          getImage: (entry) => getImage("story-character", story.id, entry.id, getThemeDefault(theme, "character")),
           setImage: (entry, dataUrl) => setImage("story-character", story.id, entry.id, dataUrl)
         });
       }
@@ -453,6 +467,19 @@
         uploadInFlight = true;
         try {
           const dataUrl = await readAsDataUrl(file);
+          if (isElectron) {
+            if (!window.electronAPI || !window.electronAPI.saveImage) {
+              throw new Error("Electron API not available.");
+            }
+            return await window.electronAPI.saveImage({
+              dataUrl,
+              filename: file.name,
+              type: pendingUpload.type,
+              scope: pendingUpload.scope,
+              id: pendingUpload.id,
+              name: pendingUpload.name
+            });
+          }
           const response = await fetch("/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -465,7 +492,11 @@
           return payload.path;
         } catch (error) {
           console.error(error);
-          alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
+          if (!isElectron) {
+            alert("Upload failed. Start the server with `node scripts/server.js` and try again.");
+          } else {
+            alert("Upload failed. Try again or restart the app.");
+          }
           return null;
         } finally {
           uploadInFlight = false;
@@ -479,6 +510,15 @@
           reader.onerror = () => reject(reader.error);
           reader.readAsDataURL(file);
         });
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
       }
     </script>
   </body>
