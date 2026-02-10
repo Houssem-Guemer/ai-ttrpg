@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, protocol } = require("electron");
 const fs = require("fs");
 const path = require("path");
-const { pathToFileURL } = require("url");
 
 const ROOT_DIR = __dirname;
 
@@ -17,13 +16,24 @@ protocol.registerSchemesAsPrivileged([
   }
 ]);
 
+function normalizeRoot(rootPath) {
+  return path.resolve(rootPath);
+}
+
+function isPathInside(basePath, targetPath) {
+  const base = normalizeRoot(basePath);
+  const target = normalizeRoot(targetPath);
+  return target.toLowerCase().startsWith(base.toLowerCase());
+}
+
 function registerAppProtocol() {
   protocol.registerFileProtocol("app", (request, callback) => {
     try {
       const url = new URL(request.url);
       const relativePath = decodeURIComponent(url.pathname).replace(/^\/+/, "");
-      const resolvedPath = path.normalize(path.join(ROOT_DIR, relativePath));
-      if (!resolvedPath.startsWith(ROOT_DIR)) {
+      const rootDir = url.hostname === "userdata" ? app.getPath("userData") : ROOT_DIR;
+      const resolvedPath = path.normalize(path.join(rootDir, relativePath));
+      if (!isPathInside(rootDir, resolvedPath)) {
         callback({ error: -6 });
         return;
       }
@@ -100,7 +110,8 @@ function registerIpc() {
     }
     await fs.promises.writeFile(filePath, decoded.buffer);
     if (app.isPackaged) {
-      return pathToFileURL(filePath).toString();
+      const relative = path.relative(app.getPath("userData"), filePath).split(path.sep).join("/");
+      return `app://userdata/${relative}`;
     }
     const relative = path.relative(ROOT_DIR, filePath).split(path.sep).join("/");
     return `app://./${relative}`;
