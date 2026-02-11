@@ -15,6 +15,7 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 - data/stories/<storyId>/factions.json: guilds/groups/organizations.
 - data/stories/<storyId>/characters/*.json: all characters, including the player.
 - data/stories/<storyId>/log.json: running narrative log (short entries).
+- data/stories/<storyId>/recap.json: expanded continuity snapshot to preserve state between prompts.
 - scripts/roll_dice.js: CLI dice roller used to resolve checks.
 - web/index.html: static UI to read stories and canon data.
 
@@ -42,6 +43,8 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 - Keep descriptions compact; store only stable canon in JSON.
 - Prefer small updates over large rewrites to avoid bloat.
 - Each story is isolated by folder; multiple genres are supported.
+- During gameplay, only narrate the story; do not mention file changes.
+- Preserve maximum continuity between prompts by keeping JSON fully up to date (story scene, characters, factions, world, and log). Ensure the latest log entry includes a concise but complete "current state" recap: location, time, party status, NPCs present, open quests, immediate threats, unresolved choices, and any recent changes to inventory/relationships/flags.
 - Enforce canon and consequences: contradict invalid actions or missing items, and apply realistic outcomes for reckless choices.
 - When using reusable entries (items, characters, factions, locations, monsters), copy them into the story data first; only update the story copy after changes so shared bases stay unchanged.
 

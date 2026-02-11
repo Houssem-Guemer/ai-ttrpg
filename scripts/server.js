@@ -50,9 +50,16 @@ function serveStatic(req, res) {
     }
     const ext = path.extname(filePath).toLowerCase();
     const mime = mimeTypes[ext] || "application/octet-stream";
+    const noCache = new Set([".html", ".css", ".js", ".json"]);
     fs.readFile(filePath, (readErr, data) => {
       if (readErr) return send(res, 500, "Failed to read file");
-      send(res, 200, data, { "Content-Type": mime });
+      const headers = { "Content-Type": mime };
+      if (noCache.has(ext)) {
+        headers["Cache-Control"] = "no-store, must-revalidate";
+        headers["Pragma"] = "no-cache";
+        headers["Expires"] = "0";
+      }
+      send(res, 200, data, headers);
     });
   });
 }
