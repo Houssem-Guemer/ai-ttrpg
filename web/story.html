@@ -315,8 +315,17 @@
       let keywordRegex = null;
       let keywordLookup = new Map();
 
-      async function loadJson(path) {
-        const response = await fetch(path);
+      const AUTO_REFRESH_MS = 3000;
+      let refreshTimer = null;
+
+      function withCacheBust(path) {
+        const sep = path.includes("?") ? "&" : "?";
+        return `${path}${sep}ts=${Date.now()}`;
+      }
+
+      async function loadJson(path, options = {}) {
+        const url = options.bust ? withCacheBust(path) : path;
+        const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) {
           throw new Error(`Failed to load ${path}`);
         }
@@ -393,6 +402,7 @@
           })
           .join("");
         const image = getStoryCharacterImage(char.id);
+        const extraSections = renderPlayerExtras(char);
         return `
           <div class="character-card">
             <div class="character-header">
@@ -407,9 +417,84 @@
               <div>${inventory || "No items."}</div>
               <p class="section-title">Status</p>
               <p>${char.status}</p>
+              ${extraSections}
             </div>
           </div>
         `;
+      }
+
+      function renderPlayerExtras(char) {
+        const sections = [];
+
+        if (char.background) {
+          sections.push(`<p class="section-title">Background</p><p>${escapeHtml(char.background)}</p>`);
+        }
+
+        if (Array.isArray(char.traits) && char.traits.length) {
+          const traits = char.traits.map((trait) => `<span class="item-tag">${escapeHtml(trait)}</span>`).join("");
+          sections.push(`<p class="section-title">Traits</p><div>${traits}</div>`);
+        }
+
+        if (Array.isArray(char.skills) && char.skills.length) {
+          const skills = char.skills
+            .map((skill) => {
+              const name = skill.name || skill.id || "Skill";
+              const description = skill.description ? ` - ${escapeHtml(skill.description)}` : "";
+              return `<div><strong>${escapeHtml(name)}</strong>${description}</div>`;
+            })
+            .join("");
+          sections.push(`<p class="section-title">Skills</p><div>${skills}</div>`);
+        }
+
+        if (char.stats && typeof char.stats === "object") {
+          const stats = Object.entries(char.stats)
+            .map(([key, value]) => `<div><strong>${escapeHtml(formatKey(key))}:</strong> ${escapeHtml(value)}</div>`)
+            .join("");
+          sections.push(`<p class="section-title">Stats</p><div>${stats}</div>`);
+        }
+
+        const knownKeys = new Set([
+          "id",
+          "name",
+          "appearance",
+          "background",
+          "inventory",
+          "stats",
+          "status",
+          "traits",
+          "skills"
+        ]);
+        Object.keys(char || {}).forEach((key) => {
+          if (knownKeys.has(key)) return;
+          const value = char[key];
+          if (value === null || typeof value === "undefined") return;
+          const rendered = renderValue(value);
+          if (!rendered) return;
+          sections.push(`<p class="section-title">${escapeHtml(formatKey(key))}</p><div>${rendered}</div>`);
+        });
+
+        return sections.join("");
+      }
+
+      function renderValue(value) {
+        if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+          return `<p>${escapeHtml(value)}</p>`;
+        }
+        if (Array.isArray(value)) {
+          const items = value.map((entry) => `<div>${escapeHtml(entry)}</div>`).join("");
+          return items || "";
+        }
+        if (typeof value === "object") {
+          const json = JSON.stringify(value);
+          return `<p>${escapeHtml(json)}</p>`;
+        }
+        return "";
+      }
+
+      function formatKey(key) {
+        return String(key)
+          .replace(/[_-]+/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase());
       }
 
       function renderNpcCard(char) {
@@ -668,14 +753,51 @@
 
       async function loadStoryCharacters(path, player) {
         try {
-          const index = await loadJson(`${path}/characters/index.json`);
+          const index = await loadJson(`${path}/characters/index.json`, { bust: true });
           const entries = await Promise.all(
-            index.characters.map((entry) => loadJson(`${path}/characters/${entry.file}`))
+            index.characters.map((entry) => loadJson(`${path}/characters/${entry.file}`, { bust: true }))
           );
           return entries;
         } catch (error) {
           return [player];
         }
+      }
+
+      async function refreshStory(storyPath) {
+        const [storyData, world, factions, log, player] = await Promise.all([
+          loadJson(`../${storyPath}/story.json`, { bust: true }),
+          loadJson(`../${storyPath}/world.json`, { bust: true }),
+          loadJson(`../${storyPath}/factions.json`, { bust: true }),
+          loadJson(`../${storyPath}/log.json`, { bust: true }),
+          loadJson(`../${storyPath}/characters/player.json`, { bust: true })
+        ]);
+
+        currentStoryId = currentStoryId || storyData.id;
+        currentStoryTheme = storyData.genre;
+        currentCharacters = await loadStoryCharacters(`../${storyPath}`, player);
+        currentLog = log;
+        currentWorld = world;
+        currentFactions = factions;
+
+        document.getElementById("story-title").textContent = storyData.title;
+        document.getElementById("story-subhead").textContent = storyData.summary;
+
+        buildKeywordIndex();
+        renderStoryMeta(storyData);
+        renderWorld(world, factions);
+        renderCharacters(currentCharacters);
+        renderLog(currentLog);
+        const themeItems = itemsCatalog.themes && itemsCatalog.themes[currentStoryTheme];
+        renderItemsPanel(themeItems);
+      }
+
+      function scheduleRefresh(storyPath) {
+        if (refreshTimer) {
+          clearInterval(refreshTimer);
+        }
+        refreshTimer = setInterval(() => {
+          refreshStory(storyPath).catch((error) => console.error("Refresh failed:", error));
+        }, AUTO_REFRESH_MS);
       }
 
       async function init() {
@@ -699,31 +821,9 @@
           return;
         }
 
-        const [storyData, world, factions, log, player] = await Promise.all([
-          loadJson(`../${story.path}/story.json`),
-          loadJson(`../${story.path}/world.json`),
-          loadJson(`../${story.path}/factions.json`),
-          loadJson(`../${story.path}/log.json`),
-          loadJson(`../${story.path}/characters/player.json`)
-        ]);
-
         currentStoryId = storyId;
-        currentStoryTheme = storyData.genre;
-        currentCharacters = await loadStoryCharacters(`../${story.path}`, player);
-        currentLog = log;
-        currentWorld = world;
-        currentFactions = factions;
-
-        document.getElementById("story-title").textContent = storyData.title;
-        document.getElementById("story-subhead").textContent = storyData.summary;
-
-        buildKeywordIndex();
-        renderStoryMeta(storyData);
-        renderWorld(world, factions);
-        renderCharacters(currentCharacters);
-        renderLog(currentLog);
-        const themeItems = itemsCatalog.themes && itemsCatalog.themes[currentStoryTheme];
-        renderItemsPanel(themeItems);
+        await refreshStory(story.path);
+        scheduleRefresh(story.path);
       }
 
       init().catch((error) => {
