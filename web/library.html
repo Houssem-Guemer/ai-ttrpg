@@ -8,12 +8,14 @@
       @import url("https://fonts.googleapis.com/css2?family=Marcellus&family=Fira+Sans:wght@300;500;700&display=swap");
 
       :root {
-        --bg: #f3efe6;
-        --ink: #2c2a27;
-        --accent: #c44e3b;
-        --accent-2: #2e6f7e;
-        --panel: #fffaf0;
-        --shadow: rgba(31, 27, 21, 0.15);
+        --bg: #1f1a16;
+        --ink: #e7dfd2;
+        --ink-muted: #b8ac9b;
+        --accent: #d26a52;
+        --accent-2: #6ea7a4;
+        --panel: #2a241f;
+        --panel-2: #241e1a;
+        --shadow: rgba(8, 6, 5, 0.35);
       }
 
       * {
@@ -24,38 +26,47 @@
         margin: 0;
         font-family: "Fira Sans", "Segoe UI", sans-serif;
         color: var(--ink);
-        background: radial-gradient(circle at top left, #f8f1d8 0%, #f3efe6 40%, #efe3cf 100%);
+        background: radial-gradient(circle at top left, #2b241e 0%, #221c18 45%, #1b1613 100%);
         min-height: 100vh;
       }
 
       header {
-        padding: 2.5rem 6vw 1rem;
+        padding: 1.2rem 4vw 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
       }
 
       nav {
         display: flex;
-        gap: 1rem;
-        margin-top: 0.8rem;
-        font-size: 0.85rem;
+        gap: 0.6rem;
+        font-size: 0.8rem;
+        align-items: center;
       }
 
       nav a {
         color: var(--accent-2);
         text-decoration: none;
-        border-bottom: 1px dashed rgba(46, 111, 126, 0.5);
+        border: 1px solid rgba(110, 167, 164, 0.45);
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(110, 167, 164, 0.12);
       }
 
       h1 {
         font-family: "Marcellus", serif;
-        font-size: clamp(2rem, 4vw, 3.5rem);
-        margin: 0 0 0.5rem;
+        font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+        margin: 0;
         letter-spacing: 0.02em;
       }
 
       .subhead {
-        color: #5c554a;
+        color: var(--ink-muted);
         max-width: 48rem;
-        line-height: 1.6;
+        line-height: 1.4;
+        font-size: 0.9rem;
+        margin: 0.25rem 0 0;
       }
 
       main {
@@ -70,6 +81,7 @@
         border-radius: 16px;
         box-shadow: 0 12px 30px var(--shadow);
         animation: rise 0.8s ease both;
+        border: 1px solid rgba(255, 255, 255, 0.04);
       }
 
       .panel h2 {
@@ -96,16 +108,16 @@
         gap: 0.8rem;
         padding: 0.7rem;
         border-radius: 12px;
-        background: rgba(44, 42, 39, 0.04);
+        background: rgba(255, 255, 255, 0.03);
       }
 
       .card img {
         width: 56px;
         height: 56px;
         object-fit: contain;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       .card button {
@@ -113,13 +125,13 @@
         border-radius: 999px;
         padding: 0.35rem 0.8rem;
         font-size: 0.75rem;
-        background: rgba(196, 78, 59, 0.14);
-        color: var(--accent);
+        background: rgba(210, 106, 82, 0.2);
+        color: #f3c3a8;
         cursor: pointer;
       }
 
       .meta {
-        color: #5c554a;
+        color: var(--ink-muted);
         font-size: 0.85rem;
         margin-top: 0.2rem;
       }
@@ -132,13 +144,15 @@
       select {
         padding: 0.5rem;
         border-radius: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         font-family: inherit;
+        background: var(--panel-2);
+        color: var(--ink);
       }
 
       .note {
         font-size: 0.85rem;
-        color: #5c554a;
+        color: var(--ink-muted);
       }
 
       @keyframes rise {
@@ -152,6 +166,31 @@
         }
       }
 
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(110, 167, 164, 0.55) rgba(255, 255, 255, 0.06);
+      }
+
+      *::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background: rgba(110, 167, 164, 0.55);
+        border-radius: 999px;
+        border: 2px solid rgba(31, 26, 22, 0.8);
+      }
+
+      *::-webkit-scrollbar-thumb:hover {
+        background: rgba(210, 106, 82, 0.6);
+      }
+
       @media (max-width: 640px) {
         header,
         main {
@@ -163,8 +202,10 @@
   </head>
   <body>
     <header>
-      <h1>Image Library</h1>
-      <p class="subhead">Upload images for items, monsters, factions, locations, and characters. Images are stored locally in your browser and appear across the UI.</p>
+      <div>
+        <h1>Image Library</h1>
+        <p class="subhead">Upload images for items, monsters, factions, locations, and characters. Images are stored locally in your browser and appear across the UI.</p>
+      </div>
       <nav>
         <a href="index.html">Back to Console</a>
       </nav>

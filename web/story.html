@@ -8,12 +8,14 @@
       @import url("https://fonts.googleapis.com/css2?family=Marcellus&family=Fira+Sans:wght@300;500;700&display=swap");
 
       :root {
-        --bg: #f3efe6;
-        --ink: #2c2a27;
-        --accent: #c44e3b;
-        --accent-2: #2e6f7e;
-        --panel: #fffaf0;
-        --shadow: rgba(31, 27, 21, 0.15);
+        --bg: #1f1a16;
+        --ink: #e7dfd2;
+        --ink-muted: #b8ac9b;
+        --accent: #d26a52;
+        --accent-2: #6ea7a4;
+        --panel: #2a241f;
+        --panel-2: #241e1a;
+        --shadow: rgba(8, 6, 5, 0.35);
       }
 
       * {
@@ -24,7 +26,7 @@
         margin: 0;
         font-family: "Fira Sans", "Segoe UI", sans-serif;
         color: var(--ink);
-        background: radial-gradient(circle at top left, #f8f1d8 0%, #f3efe6 40%, #efe3cf 100%);
+        background: radial-gradient(circle at top left, #2b241e 0%, #221c18 45%, #1b1613 100%);
         height: 100vh;
         overflow: hidden;
       }
@@ -47,10 +49,10 @@
       nav a {
         color: var(--accent-2);
         text-decoration: none;
-        border: 1px solid rgba(46, 111, 126, 0.35);
+        border: 1px solid rgba(110, 167, 164, 0.45);
         padding: 0.35rem 0.7rem;
         border-radius: 999px;
-        background: rgba(46, 111, 126, 0.08);
+        background: rgba(110, 167, 164, 0.12);
       }
 
       h1 {
@@ -61,7 +63,7 @@
       }
 
       .subhead {
-        color: #5c554a;
+        color: var(--ink-muted);
         max-width: 42rem;
         line-height: 1.4;
         font-size: 0.9rem;
@@ -87,6 +89,7 @@
         border-radius: 16px;
         box-shadow: 0 12px 30px var(--shadow);
         animation: rise 0.8s ease both;
+        border: 1px solid rgba(255, 255, 255, 0.04);
       }
 
       .panel h2 {
@@ -99,8 +102,8 @@
         display: inline-block;
         padding: 0.2rem 0.6rem;
         border-radius: 999px;
-        background: rgba(196, 78, 59, 0.15);
-        color: var(--accent);
+        background: rgba(210, 106, 82, 0.2);
+        color: #f3c3a8;
         font-size: 0.75rem;
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -117,7 +120,7 @@
       .log-entry {
         margin: 0.8rem 0;
         padding-bottom: 0.8rem;
-        border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
       }
 
       .log-entry:last-child {
@@ -133,12 +136,12 @@
       .log-entry > span {
         display: block;
         font-size: 0.75rem;
-        color: #6d6558;
+        color: var(--ink-muted);
         margin-bottom: 0.3rem;
       }
 
       .hoverable {
-        border-bottom: 1px dashed rgba(46, 111, 126, 0.6);
+        border-bottom: 1px dashed rgba(110, 167, 164, 0.55);
         cursor: help;
       }
 
@@ -149,8 +152,8 @@
         padding: 0.2rem 0.55rem;
         margin: 0.2rem 0.3rem 0 0;
         border-radius: 999px;
-        background: rgba(46, 111, 126, 0.12);
-        color: var(--accent-2);
+        background: rgba(110, 167, 164, 0.18);
+        color: #c9e3e0;
         font-size: 0.75rem;
         cursor: help;
       }
@@ -167,16 +170,16 @@
         gap: 0.75rem;
         padding: 0.6rem;
         border-radius: 12px;
-        background: rgba(44, 42, 39, 0.04);
+        background: rgba(255, 255, 255, 0.03);
       }
 
       .item-card img {
         width: 48px;
         height: 48px;
         object-fit: contain;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       .character-card {
@@ -184,7 +187,7 @@
         gap: 0.6rem;
         padding: 0.8rem;
         border-radius: 14px;
-        background: rgba(44, 42, 39, 0.04);
+        background: rgba(255, 255, 255, 0.03);
       }
 
       .character-header {
@@ -198,9 +201,9 @@
         width: 64px;
         height: 64px;
         object-fit: contain;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       .character-group {
@@ -241,24 +244,24 @@
 
       .chat-entry .meta {
         font-size: 0.75rem;
-        color: #6d6558;
+        color: var(--ink-muted);
       }
 
       .chat-bubble {
         padding: 0.65rem 0.8rem;
         border-radius: 12px;
-        background: rgba(44, 42, 39, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         line-height: 1.4;
       }
 
       .chat-entry.player .chat-bubble {
-        background: rgba(196, 78, 59, 0.12);
-        border: 1px solid rgba(196, 78, 59, 0.2);
+        background: rgba(210, 106, 82, 0.18);
+        border: 1px solid rgba(210, 106, 82, 0.35);
       }
 
       .chat-entry.narrator .chat-bubble {
-        background: rgba(46, 111, 126, 0.1);
-        border: 1px solid rgba(46, 111, 126, 0.2);
+        background: rgba(110, 167, 164, 0.16);
+        border: 1px solid rgba(110, 167, 164, 0.3);
       }
 
       .chat-entry.roll-highlight .chat-bubble {
@@ -274,12 +277,13 @@
         width: 100%;
         min-height: 110px;
         border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         padding: 0.65rem 0.75rem;
         font-family: "Fira Sans", "Segoe UI", sans-serif;
         font-size: 0.95rem;
         resize: vertical;
-        background: #fffdf7;
+        background: var(--panel-2);
+        color: var(--ink);
       }
 
       .prompt-actions {
@@ -298,6 +302,7 @@
         font-weight: 600;
         letter-spacing: 0.02em;
         cursor: pointer;
+        box-shadow: 0 8px 18px rgba(210, 106, 82, 0.25);
       }
 
       .prompt-actions button[disabled] {
@@ -307,7 +312,7 @@
 
       .prompt-status {
         font-size: 0.85rem;
-        color: #6d6558;
+        color: var(--ink-muted);
       }
 
       #item-tooltip {
@@ -317,20 +322,21 @@
         padding: 0.4rem;
         border-radius: 12px;
         background: var(--panel);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
         pointer-events: none;
         width: 220px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       #item-tooltip img {
         width: 120px;
         height: 120px;
         object-fit: contain;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 10px;
         display: block;
         margin-bottom: 0.4rem;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       #item-tooltip .title {
@@ -340,7 +346,7 @@
 
       #item-tooltip .desc {
         font-size: 0.8rem;
-        color: #5c554a;
+        color: var(--ink-muted);
       }
 
       @keyframes rise {
@@ -352,6 +358,31 @@
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(110, 167, 164, 0.55) rgba(255, 255, 255, 0.06);
+      }
+
+      *::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background: rgba(110, 167, 164, 0.55);
+        border-radius: 999px;
+        border: 2px solid rgba(31, 26, 22, 0.8);
+      }
+
+      *::-webkit-scrollbar-thumb:hover {
+        background: rgba(210, 106, 82, 0.6);
       }
 
       @media (max-width: 640px) {
