@@ -49,7 +49,7 @@ function ensureSession(storyId) {
     }
   });
 
-  session = { proc, queue: Promise.resolve(), lastUsed: Date.now() };
+  session = { proc, queue: Promise.resolve(), lastUsed: Date.now(), initialized: false };
   sessions.set(storyId, session);
   return session;
 }
@@ -106,6 +106,18 @@ async function handlePrompt(storyId, text) {
 
   if (!session.proc || session.proc.exitCode !== null) {
     throw new Error("Codex session not available.");
+  }
+
+  if (!session.initialized) {
+    const relativePath = path.relative(ROOT, storyPath).replace(/\\/g, "/");
+    const bootstrap = [
+      "You are the narrator. Read AGENTS.md in the repo root and follow it.",
+      `Continue the story with id "${storyId}" located at "${relativePath}".`,
+      "Always treat data in that story folder as canon and update story.json, characters, world, factions, and log.json as needed.",
+      "Do not change other stories. Keep narration concise and consistent with prior log/recap."
+    ].join(" ");
+    session.proc.stdin.write(`${bootstrap}\n`);
+    session.initialized = true;
   }
 
   session.proc.stdin.write(`${text}\n`);
