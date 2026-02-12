@@ -5,12 +5,6 @@
       "title": "Whispering Pines",
       "genre": "fantasy",
       "path": "data/stories/starter-fantasy"
-    },
-    {
-      "id": "goburo-iseikai",
-      "title": "Goburo's First Hunt",
-      "genre": "isekai fantasy",
-      "path": "data/stories/goburo-iseikai"
     }
   ]
 }
