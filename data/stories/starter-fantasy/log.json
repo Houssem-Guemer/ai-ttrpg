@@ -4,5 +4,23 @@
     "speaker": "Narrator",
     "text": "Rain patters against the windows of the Lanternrest Inn as travelers murmur about pale lights in the pines.",
     "timestamp": "2026-02-09T14:55:00Z"
+  },
+  {
+    "turn": 2,
+    "speaker": "Player",
+    "text": "I am an immortal sage who lived centuries who look in the 30s (I honed many skills, and my body into the ultimate weapon and my mind into the ultimate wisdom, I learned all magic and made my own) But here I am with no memory of my past I step into the inn, Not knowing why I am here.",
+    "timestamp": "2026-02-12T16:12:21.645Z"
+  },
+  {
+    "turn": 3,
+    "speaker": "Narrator",
+    "text": "You shoulder through the inn door and wet air follows you in; every lantern along the rafters gutters blue for one breath before recovering, and conversation dies mid-word. Behind the bar, the proprietor tightens her grip on an iron ward-charm and stares at you like she recognizes something she cannot place.\n\nThe front door slams again. A mud-soaked Pinewarden runner staggers in with a torn sleeve and blood on his forearm, drops a split stone marker chip on the table, and rasps, \"The third marker cracked open from the inside. The lights are moving toward Lanternrest, not away.\" Heads turn to you when your right palm flares with a brief, cold sigil-light that matches the chip's spiral cut.\n\nCurrent state: location Lanternrest Inn common room; time rainy evening, near full dark; party status player alone, physically steady, memory-fractured, now marked by a reacting sigil; NPCs present proprietor Mara, wounded Pinewarden runner Tovin, hooded carter, wary travelers; open quests missing travelers, missing caravan, Kael missing, pale lights, third marker anomaly; immediate threats lights advancing toward hamlet and possible incursion tonight; unresolved choices aid Tovin to the road now, secure the inn and question Mara about the sigil, or inspect the split marker chip for arcane traces before committing. Which do you choose?",
+    "timestamp": "2026-02-12T16:14:00.4017074Z"
+  },
+  {
+    "turn": 3,
+    "speaker": "NPC",
+    "text": "Mara the proprietor sets a loaded crossbow under the counter and says, \"If those lights reach the square, doors won't hold long. Decide fast.\"",
+    "timestamp": "2026-02-12T16:14:00.4017074Z"
   }
 ]

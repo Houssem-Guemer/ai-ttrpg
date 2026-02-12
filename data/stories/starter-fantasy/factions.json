@@ -9,7 +9,8 @@
         "Pinewardens"
       ],
       "goals": "Find the source of the lights and restore safe travel.",
-      "relations": "Respected by the inn, stretched thin by disappearances, and wary of outsiders."
+      "relations": "Respected by the inn, stretched thin by disappearances, and now urgently mobilizing as lights approach Lanternrest.",
+      "playerAttitude": "Cautiously hopeful after witnessing the sigil reaction."
     }
   ]
 }
