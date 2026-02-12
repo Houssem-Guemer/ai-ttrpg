@@ -273,6 +273,10 @@
         gap: 0.6rem;
       }
 
+      .prompt-input-wrap {
+        position: relative;
+      }
+
       .prompt-panel textarea {
         width: 100%;
         min-height: 110px;
@@ -284,6 +288,42 @@
         resize: vertical;
         background: var(--panel-2);
         color: var(--ink);
+      }
+
+      .prompt-input-wrap.is-loading textarea {
+        opacity: 0.45;
+      }
+
+      .prompt-loader {
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        border: 1px solid rgba(110, 167, 164, 0.28);
+        background: rgba(36, 30, 26, 0.82);
+        backdrop-filter: blur(2px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        font-size: 0.9rem;
+        color: var(--ink);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+      }
+
+      .prompt-input-wrap.is-loading .prompt-loader {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .prompt-loader-spinner {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        border: 2px solid rgba(110, 167, 164, 0.35);
+        border-top-color: var(--accent-2);
+        animation: prompt-spin 0.8s linear infinite;
       }
 
       .prompt-actions {
@@ -352,6 +392,15 @@
             0 0 8px rgba(110, 167, 164, 0.65),
             12px 0 0 rgba(110, 167, 164, 0.35),
             24px 0 0 rgba(110, 167, 164, 0.18);
+        }
+      }
+
+      @keyframes prompt-spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
         }
       }
 
@@ -474,7 +523,13 @@
         </div>
         <div class="prompt-panel">
           <label class="section-title" for="prompt-input">Your action</label>
-          <textarea id="prompt-input" placeholder="Describe what the player does..."></textarea>
+          <div class="prompt-input-wrap" id="prompt-input-wrap">
+            <textarea id="prompt-input" placeholder="Describe what the player does..."></textarea>
+            <div class="prompt-loader" id="prompt-loader" aria-hidden="true">
+              <div class="prompt-loader-spinner"></div>
+              <span>Codex is thinking...</span>
+            </div>
+          </div>
           <div class="prompt-actions">
             <button id="prompt-send">Send to Codex</button>
             <div class="prompt-status" id="prompt-status">Idle.</div>
@@ -1057,8 +1112,10 @@
 
       async function sendPrompt() {
         const input = document.getElementById("prompt-input");
+        const inputWrap = document.getElementById("prompt-input-wrap");
         const status = document.getElementById("prompt-status");
         const button = document.getElementById("prompt-send");
+        if (button.disabled) return;
         const text = input.value;
         if (!currentStoryId) {
           status.textContent = "Missing story id.";
@@ -1069,6 +1126,9 @@
           return;
         }
         button.disabled = true;
+        input.disabled = true;
+        input.value = "";
+        if (inputWrap) inputWrap.classList.add("is-loading");
         status.classList.add("loading");
         status.textContent = "Sending to Codex...";
         try {
@@ -1081,7 +1141,6 @@
             const payload = await response.json().catch(() => ({}));
             throw new Error(payload.error || "Request failed.");
           }
-          input.value = "";
           status.textContent = "Waiting for narration...";
           setTimeout(() => {
             status.textContent = "Idle.";
@@ -1092,6 +1151,8 @@
           status.classList.remove("loading");
         } finally {
           button.disabled = false;
+          input.disabled = false;
+          if (inputWrap) inputWrap.classList.remove("is-loading");
         }
       }
 

@@ -244,8 +244,15 @@ async function runNarratorExec(storyId, storyPath, text) {
     "The player's action for this turn has already been logged verbatim in log.json by the server.",
     "Do not edit or rewrite the player's text and do not append another Player log entry for this turn.",
     "Append narrator/NPC log entries and update story/characters/world/factions when relevant.",
+    "Narration style: vivid, grounded, and dynamic like a strong tabletop GM.",
+    "Every turn must introduce at least one NEW concrete development: a reaction, clue, threat, opportunity, cost, or environmental change.",
+    "Do not just restate known facts. Prioritize what changes because of the player's action.",
+    "Use sensory detail, NPC intent, and immediate stakes. Show motion in the world even if the player pauses.",
+    "When new information appears, connect it to actionable next steps and tradeoffs the player could pursue.",
+    "End the narrator turn with a direct prompt that invites a meaningful choice.",
+    "Keep narration concise but evocative (about 1-3 short paragraphs).",
     "Do not change other stories.",
-    "After writing files, respond with a brief confirmation (not full narration).",
+    "Write the actual narration into log.json. In stdout, return only a brief completion note.",
     "",
     `Exact player action: ${JSON.stringify(text)}`
   ].join("\n");

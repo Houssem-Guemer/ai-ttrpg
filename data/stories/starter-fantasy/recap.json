@@ -1,34 +1,37 @@
 {
   "storyId": "starter-fantasy",
-  "lastUpdated": "2026-02-12T15:54:15.812Z",
-  "summary": "Hashibee enters Lanternrest Inn out of the rain, draws wary attention, and is pointed toward Old Pine Road as the first concrete lead.",
+  "lastUpdated": "2026-02-12T16:04:31.0783656Z",
+  "summary": "Hashibee openly asks why anyone comes to Whispering Pines and travels Old Pine Road, drawing candid answers about trade, pilgrimage, and recent vanishings near the third marker.",
   "currentState": {
     "location": "Lanternrest Inn (hearthside common room)",
-    "time": "Rainy evening",
-    "partyStatus": "Player alone, composed, amnesiac, seeking clues",
+    "time": "Rainy evening, nearing full dark",
+    "partyStatus": "Player alone, composed, amnesiac, socially engaged and collecting concrete route intelligence",
     "npcsPresent": [
       "Unnamed proprietor",
+      "Hooded carter",
       "A few wary travelers"
     ],
     "openQuests": [
       "Missing travelers",
       "Pale lights in the pines",
       "Missing caravan",
-      "Kael the ranger missing"
+      "Kael the ranger missing",
+      "Disappearances near the third stone marker on Old Pine Road"
     ],
     "immediateThreats": [
       "No direct threat inside the inn",
-      "Night travel on Old Pine Road is considered dangerous"
+      "Night travel on Old Pine Road remains high risk"
     ],
     "unresolvedChoices": [
-      "Question the proprietor in detail",
-      "Approach the travelers for eyewitness accounts",
-      "Head to Old Pine Road now or wait until morning",
-      "Share or hide personal memory loss"
+      "Press the carter for exact route timing and landmarks",
+      "Ask for shrine details tied to the road",
+      "Travel now in darkness or wait for first light",
+      "Seek Pinewarden support despite reduced ranger presence"
     ],
     "recentChanges": [
-      "Player entered Lanternrest Inn",
-      "Proprietor offered a lead tied to Old Pine Road"
+      "Player asked the room openly about the hamlet and road",
+      "Locals confirmed Old Pine Road as a key trade and pilgrimage route",
+      "New clue: wagon lost near third stone marker five nights ago"
     ]
   }
 }
