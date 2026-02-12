@@ -1,0 +1,34 @@
+{
+  "storyId": "starter-fantasy",
+  "lastUpdated": "2026-02-12T15:54:15.812Z",
+  "summary": "Hashibee enters Lanternrest Inn out of the rain, draws wary attention, and is pointed toward Old Pine Road as the first concrete lead.",
+  "currentState": {
+    "location": "Lanternrest Inn (hearthside common room)",
+    "time": "Rainy evening",
+    "partyStatus": "Player alone, composed, amnesiac, seeking clues",
+    "npcsPresent": [
+      "Unnamed proprietor",
+      "A few wary travelers"
+    ],
+    "openQuests": [
+      "Missing travelers",
+      "Pale lights in the pines",
+      "Missing caravan",
+      "Kael the ranger missing"
+    ],
+    "immediateThreats": [
+      "No direct threat inside the inn",
+      "Night travel on Old Pine Road is considered dangerous"
+    ],
+    "unresolvedChoices": [
+      "Question the proprietor in detail",
+      "Approach the travelers for eyewitness accounts",
+      "Head to Old Pine Road now or wait until morning",
+      "Share or hide personal memory loss"
+    ],
+    "recentChanges": [
+      "Player entered Lanternrest Inn",
+      "Proprietor offered a lead tied to Old Pine Road"
+    ]
+  }
+}

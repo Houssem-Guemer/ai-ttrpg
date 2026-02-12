@@ -1059,12 +1059,12 @@
         const input = document.getElementById("prompt-input");
         const status = document.getElementById("prompt-status");
         const button = document.getElementById("prompt-send");
-        const text = input.value.trim();
+        const text = input.value;
         if (!currentStoryId) {
           status.textContent = "Missing story id.";
           return;
         }
-        if (!text) {
+        if (!text.trim()) {
           status.textContent = "Enter an action first.";
           return;
         }

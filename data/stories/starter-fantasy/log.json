@@ -7,8 +7,26 @@
   },
   {
     "turn": 2,
-    "speaker": "Hashibee",
-    "text": "I am ageless sage with no memory of my past I step into the inn, Not knowing why I am here.",
-    "timestamp": "2026-02-09T15:02:00Z"
+    "speaker": "Player",
+    "text": "I am an immortal sage who lived centuries who look in the 30s (I honed many skills, and my body into the ultimate weapon and my mind into the ultimate wisdom, I learned all magic and made my own) But here I am with no memory of my past I step into the inn, Not knowing why I am here.",
+    "timestamp": "2026-02-12T15:53:24.975Z"
+  },
+  {
+    "turn": 3,
+    "speaker": "Narrator",
+    "text": "You step out of the rain and into the inn's amber light. Conversation falters for a breath as soaked cloaks turn your way, then resumes in low, uneasy tones about pale lights and the road gone quiet.",
+    "timestamp": "2026-02-12T15:54:15.812Z"
+  },
+  {
+    "turn": 4,
+    "speaker": "NPC (Proprietor)",
+    "text": "The proprietor dries a mug with a rough cloth and nods at you. \"Seat by the hearth if you need warmth. If you're hunting answers, ask about Old Pine Road before night deepens.\"",
+    "timestamp": "2026-02-12T15:54:15.812Z"
+  },
+  {
+    "turn": 5,
+    "speaker": "Narrator",
+    "text": "Current state: Location: Lanternrest Inn common room near the hearth. Time: Rainy evening. Party status: Hashibee alone, composed, amnesiac, newly inside and observing. NPCs present: unnamed proprietor and several wary travelers. Open quests: missing travelers, pale lights in the pines, missing caravan, Kael the ranger still missing. Immediate threats: none inside the inn; tension rising around night travel. Unresolved choices: question the proprietor, speak to travelers, reveal or conceal your strange condition, or leave now for Old Pine Road. Recent changes: entered inn from the rain; received first local lead toward Old Pine Road.",
+    "timestamp": "2026-02-12T15:54:15.812Z"
   }
 ]

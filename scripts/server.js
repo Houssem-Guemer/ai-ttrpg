@@ -5,9 +5,13 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { spawn, spawnSync } = require("child_process");
 
 const root = path.resolve(__dirname, "..");
 const uploadDir = path.join(root, "assets", "uploads");
+const indexPath = path.join(root, "data", "index.json");
+const sessions = new Map();
+let narratorCommand;
 
 const mimeTypes = {
   ".html": "text/html",
@@ -25,6 +29,49 @@ const mimeTypes = {
 function send(res, status, body, headers = {}) {
   res.writeHead(status, headers);
   res.end(body);
+}
+
+function sendJson(res, status, payload) {
+  send(res, status, JSON.stringify(payload), { "Content-Type": "application/json" });
+}
+
+function isCommandAvailable(command) {
+  const checker = process.platform === "win32" ? "where" : "which";
+  const result = spawnSync(checker, [command], { stdio: "ignore" });
+  return result.status === 0;
+}
+
+function resolveNarratorCommand() {
+  if (narratorCommand) return narratorCommand;
+
+  const configured = String(process.env.NARRATOR_COMMAND || "").trim();
+  if (configured) {
+    narratorCommand = { command: configured, baseArgs: [] };
+    return narratorCommand;
+  }
+
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA || "";
+    const codexJs = path.join(appData, "npm", "node_modules", "@openai", "codex", "bin", "codex.js");
+    if (codexJs && fs.existsSync(codexJs)) {
+      narratorCommand = { command: process.execPath, baseArgs: [codexJs] };
+      return narratorCommand;
+    }
+  }
+
+  if (isCommandAvailable("codex")) {
+    narratorCommand = { command: "codex", baseArgs: [] };
+    return narratorCommand;
+  }
+  return null;
+}
+
+function narratorMissingMessage() {
+  return [
+    "Narrator CLI not found.",
+    "Install Codex CLI and ensure `codex` is in PATH,",
+    "or set NARRATOR_COMMAND to the executable path."
+  ].join(" ");
 }
 
 function safeJoin(base, target) {
@@ -83,6 +130,207 @@ function parseJson(req, res, callback) {
   });
 }
 
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function appendPlayerLogVerbatim(storyPath, text) {
+  const logPath = path.join(storyPath, "log.json");
+  let entries = [];
+  try {
+    const parsed = readJson(logPath);
+    entries = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    entries = [];
+  }
+
+  const lastEntry = entries[entries.length - 1];
+  if (lastEntry && lastEntry.speaker === "Player" && lastEntry.text === text) {
+    return logPath;
+  }
+
+  const maxTurn = entries.reduce((acc, entry) => {
+    const turn = Number(entry && entry.turn);
+    return Number.isFinite(turn) ? Math.max(acc, turn) : acc;
+  }, 0);
+
+  entries.push({
+    turn: maxTurn + 1,
+    speaker: "Player",
+    text,
+    timestamp: new Date().toISOString()
+  });
+
+  fs.writeFileSync(logPath, `${JSON.stringify(entries, null, 2)}\n`, "utf8");
+  return logPath;
+}
+
+function getStoryPath(storyId) {
+  const index = readJson(indexPath);
+  const story = index.stories.find((entry) => entry.id === storyId);
+  if (!story) return null;
+  return path.join(root, story.path);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForLogUpdate(logPath, proc, timeoutMs = 120000) {
+  let lastStat = null;
+  try {
+    lastStat = fs.statSync(logPath);
+  } catch {
+    lastStat = null;
+  }
+
+  const startedAt = Date.now();
+  let sawChange = false;
+  let changedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    await sleep(400);
+    if (proc && proc.exitCode !== null) {
+      return { ok: false, error: `Narrator process exited with code ${proc.exitCode}.` };
+    }
+    let stat = null;
+    try {
+      stat = fs.statSync(logPath);
+    } catch {
+      stat = null;
+    }
+    const changed =
+      (!lastStat && stat) ||
+      (lastStat &&
+        stat &&
+        (stat.mtimeMs !== lastStat.mtimeMs || stat.size !== lastStat.size));
+    if (changed) {
+      sawChange = true;
+      changedAt = Date.now();
+      lastStat = stat;
+    }
+    if (sawChange && Date.now() - changedAt > 1000) {
+      return { ok: true };
+    }
+  }
+  return { ok: false, error: "Timed out waiting for narration update." };
+}
+
+function ensureSession(storyId) {
+  let session = sessions.get(storyId);
+  if (session) {
+    return session;
+  }
+
+  session = {
+    queue: Promise.resolve(),
+    lastUsed: Date.now()
+  };
+  sessions.set(storyId, session);
+  return session;
+}
+
+async function runNarratorExec(storyId, storyPath, text) {
+  const narrator = resolveNarratorCommand();
+  if (!narrator) {
+    throw new Error(narratorMissingMessage());
+  }
+
+  const relativePath = path.relative(root, storyPath).replace(/\\/g, "/");
+  const prompt = [
+    "You are the narrator. Read AGENTS.md in the repo root and follow it.",
+    `Continue the story with id \"${storyId}\" located at \"${relativePath}\".`,
+    "Treat data in that story folder as canon.",
+    "The player's action for this turn has already been logged verbatim in log.json by the server.",
+    "Do not edit or rewrite the player's text and do not append another Player log entry for this turn.",
+    "Append narrator/NPC log entries and update story/characters/world/factions when relevant.",
+    "Do not change other stories.",
+    "After writing files, respond with a brief confirmation (not full narration).",
+    "",
+    `Exact player action: ${JSON.stringify(text)}`
+  ].join("\n");
+
+  const args = [
+    ...narrator.baseArgs,
+    "exec",
+    prompt,
+    "--skip-git-repo-check",
+    "--dangerously-bypass-approvals-and-sandbox",
+    "--output-last-message",
+    "-"
+  ];
+
+  await new Promise((resolve, reject) => {
+    const proc = spawn(narrator.command, args, {
+      cwd: root,
+      stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true
+    });
+
+    let stderrTail = "";
+    proc.stdout.on("data", (chunk) => {
+      process.stdout.write(`[codex:${storyId}] ${chunk}`);
+    });
+    proc.stderr.on("data", (chunk) => {
+      const textChunk = chunk.toString("utf8");
+      process.stderr.write(`[codex:${storyId}][err] ${textChunk}`);
+      stderrTail = `${stderrTail}${textChunk}`;
+      if (stderrTail.length > 1200) {
+        stderrTail = stderrTail.slice(-1200);
+      }
+    });
+
+    proc.on("error", (error) => {
+      reject(new Error(`Failed to launch narrator: ${error.message}`));
+    });
+    proc.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      const detail = stderrTail.trim();
+      reject(new Error(`Narrator process exited with code ${code}.${detail ? ` Details: ${detail}` : ""}`));
+    });
+  });
+}
+
+async function handlePrompt(storyId, text) {
+  const storyPath = getStoryPath(storyId);
+  if (!storyPath) {
+    throw new Error("Unknown story id.");
+  }
+
+  const logPath = appendPlayerLogVerbatim(storyPath, text);
+  const session = ensureSession(storyId);
+  session.lastUsed = Date.now();
+
+  await runNarratorExec(storyId, storyPath, text);
+  const result = await waitForLogUpdate(logPath, null, 5000);
+  return result.ok;
+}
+
+function handlePromptRoute(req, res) {
+  parseJson(req, res, async (payload) => {
+    try {
+      const storyId = String((payload && payload.storyId) || "").trim();
+      const rawText = payload && payload.text;
+      const text = typeof rawText === "string" ? rawText : String(rawText || "");
+      if (!storyId || !text.trim()) {
+        sendJson(res, 400, { ok: false, error: "Missing storyId or text." });
+        return;
+      }
+
+      const session = ensureSession(storyId);
+      const run = session.queue.then(() => handlePrompt(storyId, text));
+      session.queue = run.catch(() => {});
+      const updated = await run;
+      sendJson(res, 200, { ok: true, updated });
+    } catch (error) {
+      sendJson(res, 500, { ok: false, error: error.message });
+    }
+  });
+}
+
 function handleUpload(req, res) {
   parseJson(req, res, (payload) => {
     const dataUrl = payload && payload.dataUrl;
@@ -133,6 +381,12 @@ function handleUpload(req, res) {
 const server = http.createServer((req, res) => {
   if (req.method === "POST" && req.url === "/upload") {
     return handleUpload(req, res);
+  }
+  if (req.method === "POST" && req.url === "/api/prompt") {
+    return handlePromptRoute(req, res);
+  }
+  if (req.method === "GET" && req.url === "/api/prompt") {
+    return sendJson(res, 405, { ok: false, error: "Use POST /api/prompt with { storyId, text }." });
   }
   return serveStatic(req, res);
 });
