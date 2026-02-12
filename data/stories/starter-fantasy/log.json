@@ -4,59 +4,5 @@
     "speaker": "Narrator",
     "text": "Rain patters against the windows of the Lanternrest Inn as travelers murmur about pale lights in the pines.",
     "timestamp": "2026-02-09T14:55:00Z"
-  },
-  {
-    "turn": 2,
-    "speaker": "Player",
-    "text": "I am an immortal sage who lived centuries who look in the 30s (I honed many skills, and my body into the ultimate weapon and my mind into the ultimate wisdom, I learned all magic and made my own) But here I am with no memory of my past I step into the inn, Not knowing why I am here.",
-    "timestamp": "2026-02-12T15:53:24.975Z"
-  },
-  {
-    "turn": 3,
-    "speaker": "Narrator",
-    "text": "You step out of the rain and into the inn's amber light. Conversation falters for a breath as soaked cloaks turn your way, then resumes in low, uneasy tones about pale lights and the road gone quiet.",
-    "timestamp": "2026-02-12T15:54:15.812Z"
-  },
-  {
-    "turn": 4,
-    "speaker": "NPC (Proprietor)",
-    "text": "The proprietor dries a mug with a rough cloth and nods at you. \"Seat by the hearth if you need warmth. If you're hunting answers, ask about Old Pine Road before night deepens.\"",
-    "timestamp": "2026-02-12T15:54:15.812Z"
-  },
-  {
-    "turn": 5,
-    "speaker": "Narrator",
-    "text": "Current state: Location: Lanternrest Inn common room near the hearth. Time: Rainy evening. Party status: Hashibee alone, composed, amnesiac, newly inside and observing. NPCs present: unnamed proprietor and several wary travelers. Open quests: missing travelers, pale lights in the pines, missing caravan, Kael the ranger still missing. Immediate threats: none inside the inn; tension rising around night travel. Unresolved choices: question the proprietor, speak to travelers, reveal or conceal your strange condition, or leave now for Old Pine Road. Recent changes: entered inn from the rain; received first local lead toward Old Pine Road.",
-    "timestamp": "2026-02-12T15:54:15.812Z"
-  },
-  {
-    "turn": 6,
-    "speaker": "Player",
-    "text": "Why would anyone come to this place, Why would anyone go through this road. I ask openly",
-    "timestamp": "2026-02-12T16:04:02.864Z"
-  },
-  {
-    "turn": 7,
-    "speaker": "Narrator",
-    "text": "Your question cuts through the room's low murmur. A few heads turn; the unease stays, but people listen instead of looking away.",
-    "timestamp": "2026-02-12T16:04:31.0783656Z"
-  },
-  {
-    "turn": 8,
-    "speaker": "NPC (Proprietor)",
-    "text": "The proprietor sets the mug down. \"Because this hamlet sits between timber camps and the south market. Old Pine Road used to be the safe shortcut, and pilgrims still pass for the shrine deeper in the woods. Folk came for trade, shelter, and vows. Lately? They come because there's no better road, then pray they're not the next to vanish.\"",
-    "timestamp": "2026-02-12T16:04:31.0783656Z"
-  },
-  {
-    "turn": 9,
-    "speaker": "NPC (Traveler)",
-    "text": "A hooded carter near the hearth adds, \"My brother hauled salt through here every month. Last wagon went missing near the third stone marker five nights back. That road fed this place. Now it's starving it.\"",
-    "timestamp": "2026-02-12T16:04:31.0783656Z"
-  },
-  {
-    "turn": 10,
-    "speaker": "Narrator",
-    "text": "Current state: Location: Lanternrest Inn common room by the hearth. Time: Rainy evening, approaching full dark. Party status: Hashibee alone, composed, amnesiac, and now openly questioning local motives and routes. NPCs present: unnamed proprietor, hooded carter, several wary travelers. Open quests: missing travelers; pale lights in the pines; missing caravan; Kael the ranger missing; investigate disappearances near the third stone marker on Old Pine Road. Immediate threats: none inside the inn; escalating danger for anyone traveling Old Pine Road at night. Unresolved choices: question the carter for route details; gather shrine lore before departure; wait for daylight or leave immediately; seek Pinewarden support despite Kael's absence. Recent changes: locals answered openly; Old Pine Road confirmed as a vital trade and pilgrimage route; fresh clue established about a wagon lost five nights ago near the third marker.",
-    "timestamp": "2026-02-12T16:04:31.0783656Z"
   }
 ]
