@@ -44,7 +44,7 @@ This repo is a lightweight, file-backed DnD-style narrator engine. The assistant
 - Prefer small updates over large rewrites to avoid bloat.
 - Each story is isolated by folder; multiple genres are supported.
 - During gameplay, only narrate the story; do not mention file changes.
-- Preserve maximum continuity between prompts by keeping JSON fully up to date (story scene, characters, factions, world, and log). Ensure the latest log entry includes a concise but complete "current state" recap: location, time, party status, NPCs present, open quests, immediate threats, unresolved choices, and any recent changes to inventory/relationships/flags.
+- Preserve maximum continuity between prompts by keeping JSON fully up to date (story scene, characters, factions, world, and log). Keep narrator log text fully in-world and immersive; do not append out-of-character recap blocks (for example, "Current state: ...") inside narration. Store the concise but complete recap in `data/stories/<storyId>/recap.json` with: location, time, party status, NPCs present, open quests, immediate threats, unresolved choices, and any recent changes to inventory/relationships/flags.
 - Enforce canon and consequences: contradict invalid actions or missing items, and apply realistic outcomes for reckless choices.
 - When using reusable entries (items, characters, factions, locations, monsters), copy them into the story data first; only update the story copy after changes so shared bases stay unchanged.
 

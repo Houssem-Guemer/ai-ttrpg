@@ -236,6 +236,18 @@
         padding-right: 0.35rem;
       }
 
+      .story-log-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.7rem;
+        margin-bottom: 0.7rem;
+      }
+
+      .story-log-header h2 {
+        margin: 0;
+      }
+
       .chat-entry {
         display: grid;
         gap: 0.25rem;
@@ -348,6 +360,91 @@
       .prompt-actions button[disabled] {
         opacity: 0.6;
         cursor: not-allowed;
+      }
+
+      .button-secondary {
+        border: 1px solid rgba(110, 167, 164, 0.45);
+        background: rgba(110, 167, 164, 0.14);
+        color: #c9e3e0;
+        padding: 0.38rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+      }
+
+      .button-secondary:hover {
+        background: rgba(110, 167, 164, 0.22);
+      }
+
+      .button-secondary:focus-visible {
+        outline: 2px solid rgba(110, 167, 164, 0.7);
+        outline-offset: 2px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(10, 8, 7, 0.68);
+        backdrop-filter: blur(2px);
+      }
+
+      .modal-overlay.is-open {
+        display: flex;
+      }
+
+      .modal-card {
+        width: min(760px, 100%);
+        max-height: min(82vh, 760px);
+        overflow: auto;
+        background: var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.48);
+        padding: 1rem 1.2rem;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        position: sticky;
+        top: -1rem;
+        margin: -1rem -1.2rem 0.9rem;
+        padding: 1rem 1.2rem;
+        background: linear-gradient(180deg, rgba(42, 36, 31, 0.97), rgba(42, 36, 31, 0.82));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-family: "Marcellus", serif;
+        font-size: 1.2rem;
+      }
+
+      .recap-content p {
+        margin: 0.45rem 0;
+      }
+
+      .recap-content ul {
+        margin: 0.35rem 0 0.85rem 1rem;
+        padding: 0;
+      }
+
+      .recap-content li {
+        margin: 0.22rem 0;
+      }
+
+      .recap-updated {
+        font-size: 0.78rem;
+        color: var(--ink-muted);
       }
 
       .prompt-status {
@@ -518,7 +615,10 @@
       </section>
       <section class="panel chat-panel">
         <div class="chat-scroll">
-          <h2>Story</h2>
+          <div class="story-log-header">
+            <h2>Story</h2>
+            <button id="show-recap" class="button-secondary" type="button">Recap</button>
+          </div>
           <div id="log">Loading...</div>
         </div>
         <div class="prompt-panel">
@@ -545,6 +645,15 @@
         </div>
       </section>
     </main>
+    <div id="recap-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="recap-title">
+        <div class="modal-header">
+          <h3 id="recap-title">Current Recap</h3>
+          <button id="close-recap" class="button-secondary" type="button">Close</button>
+        </div>
+        <div id="recap-content" class="recap-content">No recap available yet.</div>
+      </div>
+    </div>
     <div id="item-tooltip">
       <img alt="Preview" />
       <div class="title"></div>
@@ -575,6 +684,7 @@
       let currentStoryTheme = null;
       let currentCharacters = null;
       let currentLog = null;
+      let currentRecap = null;
       let currentFactions = null;
       let currentWorld = null;
       let currentStoryId = null;
@@ -786,6 +896,15 @@
         `;
       }
 
+      function stripInlineCurrentState(text) {
+        const source = String(text || "");
+        const markerIndex = source.search(/Current state:\s/i);
+        if (markerIndex < 0) {
+          return source;
+        }
+        return source.slice(0, markerIndex).trim();
+      }
+
       function renderLog(entries) {
         const container = document.getElementById("log");
         container.innerHTML = entries
@@ -801,9 +920,11 @@
                   })
                   .join("")
               : "";
-            const logText = injectKeywords(escapeHtml(entry.text));
             const roleClass =
               String(entry.speaker || "").toLowerCase() === "narrator" ? "narrator" : "player";
+            const displayText =
+              roleClass === "narrator" ? stripInlineCurrentState(entry.text) : String(entry.text || "");
+            const logText = injectKeywords(escapeHtml(displayText));
             const rollClass = isDiceEntry(entry) ? " roll-highlight" : "";
             return `
               <div class="chat-entry ${roleClass}${rollClass}">
@@ -815,6 +936,141 @@
           })
           .join("");
         attachHover(container);
+      }
+
+      function formatRecapTimestamp(value) {
+        if (!value) return "";
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) return String(value);
+        return parsed.toLocaleString();
+      }
+
+      function renderRecapList(title, value) {
+        if (!Array.isArray(value) || !value.length) return "";
+        const items = value
+          .map((entry) => `<li>${injectKeywords(escapeHtml(String(entry)))}</li>`)
+          .join("");
+        return `
+          <p class="section-title">${escapeHtml(title)}</p>
+          <ul>${items}</ul>
+        `;
+      }
+
+      function normalizeRecapList(value) {
+        if (!Array.isArray(value)) return [];
+        return value
+          .map((entry) => {
+            if (typeof entry === "string") return entry;
+            if (entry && typeof entry === "object") {
+              if (entry.name) return String(entry.name);
+              if (entry.id) return String(entry.id);
+            }
+            return String(entry || "").trim();
+          })
+          .filter((entry) => entry.length > 0);
+      }
+
+      function flattenRecentChanges(value) {
+        if (!value) return [];
+        if (Array.isArray(value)) return normalizeRecapList(value);
+        if (typeof value !== "object") return [String(value)];
+        return Object.entries(value)
+          .flatMap(([key, entry]) => {
+            if (Array.isArray(entry) && entry.length) {
+              return entry.map((line) => `${formatKey(key)}: ${line}`);
+            }
+            if (entry && typeof entry === "string") {
+              return [`${formatKey(key)}: ${entry}`];
+            }
+            return [];
+          })
+          .map((entry) => String(entry).trim())
+          .filter((entry) => entry.length > 0);
+      }
+
+      function renderRecap() {
+        const container = document.getElementById("recap-content");
+        if (!container) return;
+
+        if (!currentRecap || typeof currentRecap !== "object") {
+          container.innerHTML = "<p>No recap available yet.</p>";
+          return;
+        }
+
+        const state = currentRecap.currentState && typeof currentRecap.currentState === "object" ? currentRecap.currentState : {};
+        const locationValue =
+          state.location ||
+          (currentRecap.location && (currentRecap.location.name || currentRecap.location.id || currentRecap.location)) ||
+          "";
+        const timeValue =
+          state.time ||
+          (currentRecap.time &&
+            [currentRecap.time.timeOfDay, currentRecap.time.date, currentRecap.time.era]
+              .filter(Boolean)
+              .join(", ")) ||
+          "";
+        const partyStatusValue =
+          state.partyStatus ||
+          (currentRecap.player && currentRecap.player.status ? currentRecap.player.status : "");
+        const npcsPresentState = normalizeRecapList(state.npcsPresent);
+        const npcsPresentFallback = normalizeRecapList(
+          currentRecap.party ? currentRecap.party.map((member) => member && member.name) : []
+        );
+        const npcsPresentValue = npcsPresentState.length ? npcsPresentState : npcsPresentFallback;
+        const openQuestsState = normalizeRecapList(state.openQuests);
+        const openQuestsValue = openQuestsState.length
+          ? openQuestsState
+          : normalizeRecapList(currentRecap.openQuests);
+        const immediateThreatsState = normalizeRecapList(state.immediateThreats);
+        const immediateThreatsValue = immediateThreatsState.length
+          ? immediateThreatsState
+          : normalizeRecapList(currentRecap.immediateThreats);
+        const unresolvedChoicesState = normalizeRecapList(state.unresolvedChoices);
+        const unresolvedChoicesValue = unresolvedChoicesState.length
+          ? unresolvedChoicesState
+          : normalizeRecapList(currentRecap.openChoices);
+        const recentChangesState = flattenRecentChanges(state.recentChanges);
+        const recentChangesValue = recentChangesState.length
+          ? recentChangesState
+          : flattenRecentChanges(currentRecap.recentChanges);
+        const summary = currentRecap.summary ? `<p>${injectKeywords(escapeHtml(currentRecap.summary))}</p>` : "";
+        const location = locationValue
+          ? `<p><strong>Location:</strong> ${injectKeywords(escapeHtml(locationValue))}</p>`
+          : "";
+        const time = timeValue ? `<p><strong>Time:</strong> ${injectKeywords(escapeHtml(timeValue))}</p>` : "";
+        const party = partyStatusValue
+          ? `<p class="section-title">Party Status</p><p>${injectKeywords(escapeHtml(partyStatusValue))}</p>`
+          : "";
+        const updated = formatRecapTimestamp(currentRecap.lastUpdated);
+
+        container.innerHTML = `
+          ${summary}
+          ${location}
+          ${time}
+          ${party}
+          ${renderRecapList("NPCs Present", npcsPresentValue)}
+          ${renderRecapList("Open Quests", openQuestsValue)}
+          ${renderRecapList("Immediate Threats", immediateThreatsValue)}
+          ${renderRecapList("Unresolved Choices", unresolvedChoicesValue)}
+          ${renderRecapList("Recent Changes", recentChangesValue)}
+          ${updated ? `<p class="recap-updated">Updated: ${escapeHtml(updated)}</p>` : ""}
+        `;
+        attachHover(container);
+      }
+
+      function openRecapModal() {
+        renderRecap();
+        const modal = document.getElementById("recap-modal");
+        if (!modal) return;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeRecapModal() {
+        const modal = document.getElementById("recap-modal");
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
       }
 
       function renderItemsPanel(themeItems) {
@@ -1048,18 +1304,20 @@
       }
 
       async function refreshStory(storyPath) {
-        const [storyData, world, factions, log, player] = await Promise.all([
+        const [storyData, world, factions, log, player, recap] = await Promise.all([
           loadJson(`../${storyPath}/story.json`, { bust: true }),
           loadJson(`../${storyPath}/world.json`, { bust: true }),
           loadJson(`../${storyPath}/factions.json`, { bust: true }),
           loadJson(`../${storyPath}/log.json`, { bust: true }),
-          loadJson(`../${storyPath}/characters/player.json`, { bust: true })
+          loadJson(`../${storyPath}/characters/player.json`, { bust: true }),
+          loadJson(`../${storyPath}/recap.json`, { bust: true }).catch(() => null)
         ]);
 
         currentStoryId = currentStoryId || storyData.id;
         currentStoryTheme = storyData.genre;
         currentCharacters = await loadStoryCharacters(`../${storyPath}`, player);
         currentLog = log;
+        currentRecap = recap;
         currentWorld = world;
         currentFactions = factions;
 
@@ -1071,6 +1329,7 @@
         renderWorld(world, factions);
         renderCharacters(currentCharacters);
         renderLog(currentLog);
+        renderRecap();
         const themeItems = itemsCatalog.themes && itemsCatalog.themes[currentStoryTheme];
         renderItemsPanel(themeItems);
       }
@@ -1159,6 +1418,9 @@
       document.addEventListener("DOMContentLoaded", () => {
         const button = document.getElementById("prompt-send");
         const input = document.getElementById("prompt-input");
+        const recapButton = document.getElementById("show-recap");
+        const recapCloseButton = document.getElementById("close-recap");
+        const recapModal = document.getElementById("recap-modal");
         if (button) {
           button.addEventListener("click", sendPrompt);
         }
@@ -1169,6 +1431,24 @@
             }
           });
         }
+        if (recapButton) {
+          recapButton.addEventListener("click", openRecapModal);
+        }
+        if (recapCloseButton) {
+          recapCloseButton.addEventListener("click", closeRecapModal);
+        }
+        if (recapModal) {
+          recapModal.addEventListener("click", (event) => {
+            if (event.target === recapModal) {
+              closeRecapModal();
+            }
+          });
+        }
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            closeRecapModal();
+          }
+        });
       });
 
       init().catch((error) => {

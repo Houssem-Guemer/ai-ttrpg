@@ -251,6 +251,8 @@ async function runNarratorExec(storyId, storyPath, text) {
     "When new information appears, connect it to actionable next steps and tradeoffs the player could pursue.",
     "End the narrator turn with a direct prompt that invites a meaningful choice.",
     "Keep narration concise but evocative (about 1-3 short paragraphs).",
+    "Keep narration in-world only. Do not append out-of-character recap blocks such as 'Current state: ...' in log text.",
+    "Update recap.json each turn with current continuity: location, time, party status, NPCs present, open quests, immediate threats, unresolved choices, and recent changes.",
     "Do not change other stories.",
     "Write the actual narration into log.json. In stdout, return only a brief completion note.",
     "",
